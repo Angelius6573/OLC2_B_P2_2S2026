@@ -1,4 +1,5 @@
 import ply.lex as lex
+from itertools import chain
 
 reserved_words = {
     'fn' : 'FUNCTION',
@@ -68,30 +69,38 @@ delimiters = {
 }
 
 punctuators = {
+    'RANGE' : r'\.\.',
     'DOT' : r'\.',
     'COMMA' : r'\,',
     'COLON' : r':',
     'SEMICOLON' : r'\;',
 }
 
-# Para cada tupla (token, patron) en el diccionario {dic}, crear una variable global
-# con el regex t_token y se le asigna su patrón.
-# Esto es para evitar:
-#     t_TOKEN = r'PATRON'
-for token, patron in relationals.items():
+# Con esto se deshace el código repetitivo de los for para cada array
+for token, patron in chain(relationals.items(),
+                           logics.items(),
+                           assignments.items(),
+                           arithmetics.items(),
+                           delimiters.items(),
+                           punctuators.items()):
     globals()[f't_{token}'] = patron
 
-for token, patron in logics.items():
-    globals()[f't_{token}'] = patron
+# Lista de tuplas de los tokens, nombre y ER
+conjunto_tokens = list(chain(
+    relationals.keys(),
+    logics.keys(),
+    assignments.keys(),
+    arithmetics.keys(),
+    delimiters.keys(),
+    punctuators.keys()
+))
 
-for token, patron in assignments.items():
-    globals()[f't_{token}'] = patron
-
-for token, patron in arithmetics.items():
-    globals()[f't_{token}'] = patron
-
-for token, patron in delimiters.items():
-    globals()[f't_{token}'] = patron
+tokens = (
+    *reserved_words.values(),
+    *conjunto_tokens,
+    'NUMERO_ENTERO',
+    'ID',
+)
 
 def t_newline(t):
     r'\n+'
@@ -113,3 +122,9 @@ def t_ignore_COMENTARIO_MULTI_LINEA(t):
     #        De otro modo, el parser consumirá todos los carácteres hasta el fin del documento o hasta encontrar otro comentario.
     # \*/  : Detecta el cierre del comentario */
     t.lexer.lineno += t.value.count('\n')
+
+def t_error(t):
+    print("Carácter no permitido '%s'" % t.value[0])
+    t.lexer.skip(1)
+
+lexer = lex.lex()
