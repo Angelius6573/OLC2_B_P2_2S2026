@@ -48,6 +48,7 @@ assignments = {
     'MULTI_ASSIGN' : r'\*=',
     'DIV_ASSIGN' : r'/=',
     'MOD_ASSIGN' : r'%=',
+    'ASSIGN' : r'=',
 }
 
 arithmetics = {
@@ -56,7 +57,6 @@ arithmetics = {
     'MULTI' : r'\*',
     'DIV' : r'/',
     'MOD' : r'%',
-    'ASSIGN' : r'=',
 }
 
 delimiters = {
@@ -99,8 +99,48 @@ tokens = (
     *reserved_words.values(),
     *conjunto_tokens,
     'NUMERO_ENTERO',
+    'NUMERO_FLOAT',
     'ID',
+    'CARACTER',
+    'CADENA',
 )
+
+def t_NUMERO_FLOAT(t):
+    r'\d+\.\d+'
+    try:
+        t.value = float(t.value)
+    except ValueError:
+        print("Valor f64 muy grande %d", t.value)
+        t.value = 0
+    return t
+
+def t_NUMERO_ENTERO(t):
+    r'\d+'
+    try:
+        t.value = int(t.value)
+    except ValueError:
+        print("Valor i32 muy grande %d", t.value)
+        t.value = 0
+    return t
+
+def t_CARACTER(t):
+    r"'([^'\\]|\\.)'"
+    t.value = eval(t.value)
+    return t
+
+def t_CADENA(t):
+    r'\"([^\\\"]|\\.)*\"'
+    t.value = t.value[1:-1] # Remover comillas
+    t.value = t.value.replace('\\t', '\t')
+    t.value = t.value.replace('\\n', '\n')
+    t.value = t.value.replace('\\"', '\"')
+    t.value = t.value.replace("\\'", "\'")
+    t.value = t.value.replace('\\\\', '\\')
+
+def t_ID(t):
+    r'[a-zA-Z][a-zA-Z_0-9]*'
+    t.type = reserved_words.get(t.value, 'ID') # NO PONER t.value.lower(), lower() deshabilita el case sensitive
+    return t
 
 def t_newline(t):
     r'\n+'
