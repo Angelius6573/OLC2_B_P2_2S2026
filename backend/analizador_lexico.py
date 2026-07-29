@@ -1,3 +1,4 @@
+#import re
 import ply.lex as lex
 from itertools import chain
 
@@ -176,8 +177,13 @@ def t_ignore_COMENTARIO_MULTI_LINEA(t):
     r'/\*[\s\S]*?\*/'
     t.lexer.lineno += t.value.count('\n')
 
+def contar_columna(input, token):
+    linea = input.rfind('\n', 0, token.lexpos) + 1
+    return (token.lexpos - linea) + 1
+
 def t_error(t):
     print("Carácter no permitido '%s'" % t.value[0])
     t.lexer.skip(1)
 
 lexer = lex.lex()
+# lexer = lex.lex(reflags = re.IGNORECASE) <- En caso de que un error de importación de lexico a sintáctico, maybe hay que tener esto
