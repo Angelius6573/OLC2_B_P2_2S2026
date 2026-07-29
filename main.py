@@ -1,6 +1,12 @@
-def main():
-    print("Hello from oxigenscript!")
+import sys
+from pathlib import Path
+sys.path.append(str(Path(__file__).parent / 'backend'))
 
+from backend.analizador_sintactico import parser
+from backend.analizador_lexico import lexer
 
-if __name__ == "__main__":
-    main()
+codigo = 'println!("x = {}", c + 1)'
+
+result = parser.parse(codigo)
+print("Resultados:\n")
+print(result)

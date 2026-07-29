@@ -10,3 +10,8 @@ wheels/
 .venv
 .python-version
 .git
+
+# Contenido del proyecto
+0781_Proyecto_1_2S2026 - 781_Proyecto1.pdf
+backend/*.out
+backend/parsetab.py
