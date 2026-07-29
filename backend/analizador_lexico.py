@@ -138,7 +138,7 @@ def t_CADENA(t):
     t.value = t.value.replace('\\\\', '\\')
 
 def t_ID(t):
-    r'[a-zA-Z][a-zA-Z_0-9]*'
+    r'[a-zA-Z_][a-zA-Z_0-9]*'
     t.type = reserved_words.get(t.value, 'ID') # NO PONER t.value.lower(), lower() deshabilita el case sensitive
     return t
 
