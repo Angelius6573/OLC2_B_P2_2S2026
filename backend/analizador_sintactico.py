@@ -1,3 +1,5 @@
+from operator import le
+
 import ply.yacc as yacc
 from backend.analizador_lexico import tokens
 
@@ -12,7 +14,8 @@ precedencia = (
 
 def p_init(t):
     'init : programa'
-    t[0] = t[1]
+    t[0] = t[1] # reasignar a ('PROGRAMA', t[1]) después para el AST
+    #t[0] = ('PROGRAMA', t[1])
 
 # programa siempre espera una lista de tuplas, esto es conveniente
 # a la hora de desarrollar el AST
@@ -30,9 +33,39 @@ def p_programa(t):
 # sentencias sin preocuparnos por reasignar a t[0] en cada caso
 def p_instruccion(t):
     '''instruccion : sentencia_imprimir
+                   | declaracion_funcion
                    | empty
     '''
     t[0] = t[1]
+
+def p_declaracion_funcion(t):
+    'declaracion_funcion : FUNCTION ID OPEN_PAR parametros_funcion CLOSE_PAR bloque_ambito'
+    t[0] = ('FUNCION', t[2], t[4], t[6])
+
+def p_parametros_funcion(t):
+    '''parametros_funcion : parametros_funcion COMMA ID
+                          | ID
+                          | empty
+    '''
+    if len(t) == 4:
+        t[1].append(t[3])
+        t[0] = t[1]
+    elif len(t) == 2:
+        t[0] = [t[1]] if t[1] is not None else []
+
+def p_bloque_ambito(t):
+    'bloque_ambito : OPEN_BRACE lista_instrucciones CLOSE_BRACE'
+    t[0] = t[2]
+
+def p_lista_instrucciones(t):
+    '''lista_instrucciones : lista_instrucciones instruccion
+                           | instruccion
+    '''
+    if len(t) == 3:
+        t[1].append(t[2])
+        t[0] = t[1]
+    if len(t) == 2:
+        t[0] = [t[1]] if t[1] is not None else []
 
 # Todo lo que no es 'argumentos_impresion' es azúcar sintáctico, lo sacamos del análisis
 def p_sentencia_imprimir(t):
@@ -110,6 +143,9 @@ def p_empty(t):
     pass
 
 def p_error(t):
-    print("Error sintáctico en '%s'" % t.value)
+    if t:
+        print(f"Error sintáctico en '{t.value}' línea {t.lineno}")
+    else:
+        print("Error sintáctico: EOF inesperado")
 
 parser = yacc.yacc()
