@@ -7,6 +7,12 @@ class OperacionBinaria(Nodo):
         self.operador = operador
         self.derecha = derecha
 
+class OperacionUnaria(Nodo):
+    def __init__(self, operador, derecha):
+        super().__init__()
+        self.operador = operador
+        self.derecha = derecha
+
 class Variable(Nodo):
     def __init__(self, id):
         super().__init__()

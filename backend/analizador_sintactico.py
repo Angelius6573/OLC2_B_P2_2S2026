@@ -7,7 +7,7 @@ from backend.sintax.aritmetica import *
 
 from backend.ast import Programa
 
-precedencia = (
+precedence = (
     ('left', 'OR'),
     ('left', 'AND'),
     ('left', 'EQUAL', 'NO_EQUAL', 'GTE', 'LTE', 'GT', 'LT'),
