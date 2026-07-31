@@ -5,6 +5,8 @@ from backend.sintax.funciones import *
 from backend.sintax.impresion import *
 from backend.sintax.aritmetica import *
 
+from backend.ast import Programa
+
 precedencia = (
     ('left', 'OR'),
     ('left', 'AND'),
@@ -17,7 +19,8 @@ precedencia = (
 def p_init(t):
     'init : programa'
     #t[0] = t[1] # reasignar a ('PROGRAMA', t[1]) después para el AST
-    t[0] = ('PROGRAMA', t[1])
+    #t[0] = ('PROGRAMA', t[1])
+    t[0] = Programa(declaraciones=t[1])
 
 # programa siempre espera una lista de tuplas, esto es conveniente
 # a la hora de desarrollar el AST

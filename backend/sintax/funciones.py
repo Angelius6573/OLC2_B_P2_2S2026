@@ -1,8 +1,14 @@
 from backend.analizador_lexico import tokens
+from backend.ast import DeclaracionFuncion, NombreFuncion
 
 def p_declaracion_funcion(t):
     'declaracion_funcion : FUNCTION nombre_funcion OPEN_PAR parametros_funcion CLOSE_PAR valor_retorno bloque_ambito'
-    t[0] = ('FUNCION', t[2], t[4], t[6], t[7])
+    t[0] = DeclaracionFuncion(
+        nombre_funcion=t[2],
+        parametros_funcion=t[4],
+        valor_retorno=t[6],
+        bloque_ambito=t[7]
+    )
 
 def p_nombre_funcion(t):
     '''nombre_funcion : ID
@@ -10,9 +16,9 @@ def p_nombre_funcion(t):
     '''
     match t.slice[1].type:
         case 'ID':
-            t[0] = ('FUNC', t[1])
+            t[0] = NombreFuncion(nombre_conjunto='FUNC', nombre_funcion=t[1])
         case 'MAIN':
-            t[0] = ('ENTRY_POINT', t[1])
+            t[0] = NombreFuncion(nombre_conjunto='ENTRY_POINT', nombre_funcion=t[1])
         case _:
             print(f"Token inesperado: {t.slice[1].type}")
 
