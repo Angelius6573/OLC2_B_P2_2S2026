@@ -3,13 +3,15 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent / 'backend'))
 
 from backend.analizador_sintactico import parser
+from backend.visitar_nodos import VisitarNodos
 
 codigo = '''
 fn main() {
-  println!("Main", x * y);
+    println!("Hello World", -x + 2, y);
 }
+
+fn foo(x: i32, y: f64) -> i32 { }
 '''
 
 result = parser.parse(codigo)
-print("Resultados:\n")
-print(result)
+VisitarNodos().visitar(result)
