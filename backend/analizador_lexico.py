@@ -18,7 +18,7 @@ reserved_words = {
     'return' : 'RETURN',
     'struct' : 'STRUCT',
     'true' : 'TRUE',
-    'false' : 'false',
+    'false' : 'FALSE',
     'String' : 'DT_STRING',
     'i32' : 'DT_INT',
     'f64' : 'DT_FLOAT',
