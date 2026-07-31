@@ -2,7 +2,7 @@ from backend.analizador_lexico import tokens
 
 # Todo lo que no es 'argumentos_impresion' es azúcar sintáctico, lo sacamos del análisis
 def p_sentencia_imprimir(t):
-    'sentencia_imprimir : PRINTLN OPEN_PAR argumentos_impresion CLOSE_PAR punto_coma'
+    'sentencia_imprimir : PRINTLN OPEN_PAR argumentos_impresion CLOSE_PAR SEMICOLON'
     t[0] = ('IMPRIMIR', t[3])
 
 def p_argumentos_impresion(t):

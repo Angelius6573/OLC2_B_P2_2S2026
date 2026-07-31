@@ -45,12 +45,6 @@ def p_tipo_dato(t):
     '''
     t[0] = t[1]
 
-def p_punto_coma(t):
-    '''punto_coma : SEMICOLON
-                  | empty
-    '''
-    t[0] = t[1] if len(t) == 2 else None
-
 def p_empty(t):
     'empty :'
     t[0] = None
