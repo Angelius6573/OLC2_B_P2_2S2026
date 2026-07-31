@@ -4,6 +4,7 @@ from backend.analizador_lexico import tokens
 from backend.sintax.funciones import *
 from backend.sintax.impresion import *
 from backend.sintax.aritmetica import *
+from backend.sintax.struct import *
 
 from backend.ast import Programa
 
@@ -18,8 +19,6 @@ precedence = (
 
 def p_init(t):
     'init : programa'
-    #t[0] = t[1] # reasignar a ('PROGRAMA', t[1]) después para el AST
-    #t[0] = ('PROGRAMA', t[1])
     t[0] = Programa(declaraciones=t[1])
 
 # programa siempre espera una lista de tuplas, esto es conveniente
@@ -36,7 +35,9 @@ def p_programa(t):
 
 # agregar 'declaracion_struct' cuando sea posible
 def p_declaracion_global(t):
-    'declaracion_global : declaracion_funcion'
+    '''declaracion_global : declaracion_funcion
+                          | declaracion_struct
+    '''
     t[0] = t[1]
 
 def p_tipo_dato(t):

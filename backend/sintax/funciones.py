@@ -51,8 +51,8 @@ def p_bloque_ambito(t):
 
 def p_instrucciones(t):
     '''instrucciones : instrucciones instruccion
-                           | instruccion
-                           | empty
+                     | instruccion
+                     | empty
     '''
     if len(t) == 3:
         t[1].append(t[2])

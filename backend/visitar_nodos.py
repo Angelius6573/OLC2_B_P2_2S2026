@@ -1,4 +1,3 @@
-from backend.ast_modular.aritmetica import OperacionUnaria
 from backend.recorrer_ast import RecorrerAST
 
 class VisitarNodos(RecorrerAST):
@@ -58,3 +57,12 @@ class VisitarNodos(RecorrerAST):
 
     def visitar_NumeroFloat(self, nodo):
         print(f'{self._sangria()}NumeroFloat({nodo.valor})')
+
+    def visitar_DeclaracionStruct(self, nodo):
+        print(f'{self._sangria()}DeclaracionStruct({nodo.nombre_struct})')
+        self.nivel += 1
+        self.visitar(nodo.parametros_struct)
+        self.nivel -= 1
+
+    def visitar_Parametros(self, nodo):
+        print(f'{self._sangria()}Parametros({nodo.parametro}, {nodo.tipo_parametro})')
