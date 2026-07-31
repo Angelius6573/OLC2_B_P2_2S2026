@@ -1,5 +1,5 @@
 from backend.analizador_lexico import tokens
-from backend.ast import DeclaracionFuncion, NombreFuncion
+from backend.ast_modular.funciones import DeclaracionFuncion, NombreFuncion
 
 def p_declaracion_funcion(t):
     'declaracion_funcion : FUNCTION nombre_funcion OPEN_PAR parametros_funcion CLOSE_PAR valor_retorno bloque_ambito'
