@@ -1,9 +1,9 @@
-from operator import le
-
 import ply.yacc as yacc
 from backend.analizador_lexico import tokens
 
 from backend.sintax.funciones import *
+from backend.sintax.impresion import *
+from backend.sintax.aritmetica import *
 
 precedencia = (
     ('left', 'OR'),
@@ -16,14 +16,14 @@ precedencia = (
 
 def p_init(t):
     'init : programa'
-    t[0] = t[1] # reasignar a ('PROGRAMA', t[1]) después para el AST
-    #t[0] = ('PROGRAMA', t[1])
+    #t[0] = t[1] # reasignar a ('PROGRAMA', t[1]) después para el AST
+    t[0] = ('PROGRAMA', t[1])
 
 # programa siempre espera una lista de tuplas, esto es conveniente
 # a la hora de desarrollar el AST
 def p_programa(t):
-    '''programa : programa instruccion
-                | instruccion
+    '''programa : programa declaracion_global
+                | declaracion_global
     '''
     if len(t) == 3:
         t[1].append(t[2])
@@ -31,29 +31,19 @@ def p_programa(t):
     if len(t) == 2:
         t[0] = [t[1]] if t[1] is not None else []
 
-# instruccion actua a modo de enrutador en la gramática, de modo que podemos seguir agregando
-# sentencias sin preocuparnos por reasignar a t[0] en cada caso
-def p_instruccion(t):
-    '''instruccion : sentencia_imprimir
-                   | declaracion_funcion
-                   | empty
-    '''
+# agregar 'declaracion_struct' cuando sea posible
+def p_declaracion_global(t):
+    'declaracion_global : declaracion_funcion'
     t[0] = t[1]
 
-
-# Todo lo que no es 'argumentos_impresion' es azúcar sintáctico, lo sacamos del análisis
-def p_sentencia_imprimir(t):
-    'sentencia_imprimir : PRINTLN OPEN_PAR argumentos_impresion CLOSE_PAR punto_coma'
-    t[0] = ('IMPRIMIR', t[3])
-
-def p_argumentos_impresion(t):
-    '''argumentos_impresion : CADENA
-                           | CADENA COMMA lista_expresion
+def p_tipo_dato(t):
+    '''tipo_dato : DT_INT
+                 | DT_FLOAT
+                 | DT_BOOL
+                 | DT_CHARACTER
+                 | DT_STRING
     '''
-    if len(t) == 2:
-        t[0] = ('CONTENIDO', t[1], [])
-    if len(t) == 4:
-        t[0] = ('CONTENIDO', t[1], t[3])
+    t[0] = t[1]
 
 def p_punto_coma(t):
     '''punto_coma : SEMICOLON
@@ -61,60 +51,9 @@ def p_punto_coma(t):
     '''
     t[0] = t[1] if len(t) == 2 else None
 
-def p_lista_expresion(t):
-    '''lista_expresion : expresion
-                       | lista_expresion COMMA expresion
-    '''
-    if len(t) == 2:
-        t[0] = [t[1]]
-    if len(t) == 4:
-        t[1].append(t[3])
-        t[0] = t[1]
-    # Se devuelve siempre una lista de expresiones. Por recursividad se acumula en la misma lista
-
-def p_expresion(t):
-    '''expresion : expresion MINUS termino
-                 | expresion ADD termino
-                 | termino
-    '''
-    if len(t) == 2:
-        t[0] = t[1]
-    if len(t) == 4:
-        t[0] = ('BINARIA', t[1], t[2], t[3])
-
-def p_termino(t):
-    '''termino : termino MULTI factor
-               | termino DIV factor
-               | termino MOD factor
-               | factor
-    '''
-    if len(t) == 2:
-        t[0] = t[1]
-    if len(t) == 4:
-        t[0] = ('BINARIA', t[1], t[2], t[3])
-
-def p_factor(t):
-    '''factor : ID
-              | NUMERO_ENTERO
-              | NUMERO_FLOAT
-              | OPEN_PAR expresion CLOSE_PAR
-    '''
-    match t.slice[1].type:
-        case 'ID':
-            t[0] = ('VARIABLE', t[1])
-        case 'NUMERO_ENTERO':
-            t[0] = ('i32', t[1])
-        case 'NUMERO_FLOAT':
-            t[0] = ('f64', t[1])
-        case 'OPEN_PAR':
-            t[0] = t[2] # No nos interesan los parentesis
-        case _:
-            print(f"Token inesperado: {t.slice[1].type}")
-
 def p_empty(t):
     'empty :'
     t[0] = None
-    pass
 
 def p_error(t):
     if t:
@@ -122,4 +61,4 @@ def p_error(t):
     else:
         print("Error sintáctico: EOF inesperado")
 
-parser = yacc.yacc()
+parser = yacc.yacc(start='init')

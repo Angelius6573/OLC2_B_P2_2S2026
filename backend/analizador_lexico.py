@@ -1,10 +1,10 @@
-#import re
 import ply.lex as lex
 from itertools import chain
 
 reserved_words = {
     'fn' : 'FUNCTION',
     'let' : 'VAR_DECLARED',
+    'main' : 'MAIN',
     'mut' : 'MUTABILITY',
     'if' : 'IF',
     'else' : 'ELSE',
