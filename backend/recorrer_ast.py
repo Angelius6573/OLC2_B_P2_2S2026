@@ -1,5 +1,5 @@
 class RecorrerAST:
-    def visitar(self, nodo):
+    def visitar(self, nodo) -> str | None:
         if isinstance(nodo, list):
             for n in nodo:
                 self.visitar(n)

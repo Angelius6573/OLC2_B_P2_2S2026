@@ -19,5 +19,8 @@ fn foo(x: i32, y: f64) -> i32 { }
 '''
 
 result = parser.parse(codigo)
-VisitarNodos().visitar(result)
+visitar_nodos_graph = VisitarNodos()
+visitar_nodos_graph.visitar(result)
+visitar_nodos_graph.renderizar()
+#VisitarNodos().visitar(result)
 #print(result)
