@@ -3,9 +3,9 @@ from itertools import chain
 
 reserved_words = {
     'fn' : 'FUNCTION',
-    'let' : 'VAR_DECLARED',
+    'let' : 'LET',
     'main' : 'MAIN',
-    'mut' : 'MUTABILITY',
+    'mut' : 'MUT',
     'if' : 'IF',
     'else' : 'ELSE',
     'while' : 'WHILE',
@@ -24,6 +24,8 @@ reserved_words = {
     'f64' : 'DT_FLOAT',
     'bool' : 'DT_BOOL',
     'char' : 'DT_CHARACTER',
+    'from' : 'FROMSTRING',
+    'new' : 'NEWSTRING',
 }
 
 embedded_functions = {
@@ -36,6 +38,7 @@ embedded_functions = {
     'to_uppercase' : 'MAYUSCULAS',
     'to_lowercase' : 'MINUSCULAS',
     'reverse' : 'REVERSE',
+    'push_str' : 'PUSH_STR'
 }
 
 # Primero los tokens que cuyo lexema tenga una longitud mayor que 1
@@ -117,6 +120,7 @@ tokens = (
     'NUMERO_FLOAT',
     'CARACTER',
     'CADENA',
+    'RAWSTRING',
     'PRINTLN',
     'ID',
 )
@@ -133,6 +137,14 @@ def t_CADENA(t):
     t.value = t.value.replace('\\"', '\"')
     t.value = t.value.replace("\\'", "\'")
     t.value = t.value.replace('\\\\', '\\')
+    return t
+
+def t_RAWSTRING(t):
+    r'r#"([^"]|"(?!#))*"#|"[^"]*"'
+    if t.value.startswith('r#"'):
+        t.value = t.value[3:-2]   ## r#"{contenido}"# → contenido
+    else:
+        t.value = t.value[2:-1]   ## r"{contenido}" -> contenido
     return t
 
 def t_CARACTER(t):
