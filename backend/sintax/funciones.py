@@ -63,5 +63,7 @@ def p_instrucciones(t):
 # instruccion actua a modo de enrutador en la gramática, de modo que podemos seguir agregando
 # sentencias sin preocuparnos por reasignar a t[0] en cada caso
 def p_instruccion(t):
-    'instruccion : sentencia_imprimir'
+    '''instruccion : sentencia_imprimir
+                   | declaracion_variable
+    '''
     t[0] = t[1]

@@ -49,6 +49,31 @@ def p_tipo_dato(t):
     '''
     t[0] = t[1]
 
+def p_expresion(t):
+    '''expresion : literales
+                 | ID
+                 | operaciones_aritmeticas
+                 | operaciones_logicos
+                 | funciones_embebidas_vars
+                 | acceso_array
+                 | params_struct
+                 | new_instance_struct
+    '''
+
+def p_literales(t):
+    '''literales : NUMERO_ENTERO
+                 | NUMERO_FLOAT
+                 | booleano
+                 | CARACTER
+                 | CADENA
+    '''
+
+def p_booleano(t):
+    '''booleano : TRUE
+                | FALSE
+    '''
+    t[0] = t[1]
+
 def p_empty(t):
     'empty :'
     t[0] = None
