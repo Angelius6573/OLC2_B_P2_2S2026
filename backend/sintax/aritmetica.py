@@ -2,10 +2,10 @@ from backend.analizador_lexico import tokens
 
 from backend.ast_modular.aritmetica import OperacionBinaria, OperacionUnaria, Variable, NumeroEntero, NumeroFloat
 
-def p_operacion(t):
-    '''operacion : operacion MINUS operadores_multiplicativos
-                 | operacion ADD operadores_multiplicativos
-                 | operadores_multiplicativos
+def p_operacion_aritmetica(t):
+    '''operacion_aritmetica : operacion_aritmetica MINUS operadores_multiplicativos
+                            | operacion_aritmetica ADD operadores_multiplicativos
+                            | operadores_multiplicativos
     '''
     if len(t) == 2:
         t[0] = t[1]
@@ -21,13 +21,7 @@ def p_operadores_multiplicativos(t):
     if len(t) == 2:
         t[0] = t[1]
     else:
-        match t.slice[2].type:
-            case 'MULTI':
-                t[0] = OperacionBinaria(izquierda=t[1], operador=t[2], derecha=t[3])
-            case 'DIV':
-                t[0] = OperacionBinaria(izquierda=t[1], operador=t[2], derecha=t[3])
-            case 'MOD':
-                t[0] = OperacionBinaria(izquierda=t[1], operador=t[2], derecha=t[3])
+        t[0] = OperacionBinaria(izquierda=t[1], operador=t[2], derecha=t[3])
 
 def p_operacion_unaria(t):
     '''operacion_unaria : MINUS operacion_unaria %prec NEGACION_UNARIA
@@ -42,7 +36,7 @@ def p_operando(t):
     '''operando : ID
                 | NUMERO_ENTERO
                 | NUMERO_FLOAT
-                | OPEN_PAR operacion CLOSE_PAR
+                | OPEN_PAR operacion_aritmetica CLOSE_PAR
     '''
     match t.slice[1].type:
         case 'ID':

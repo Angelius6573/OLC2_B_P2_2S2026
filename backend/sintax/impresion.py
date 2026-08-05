@@ -17,8 +17,8 @@ def p_argumentos_impresion(t):
         t[0] = ArgumentosImpresion(cadena=t[1], operaciones_directas=t[3])
 
 def p_operaciones_directas(t):
-    '''operaciones_directas : operaciones_directas COMMA operacion
-                            | operacion
+    '''operaciones_directas : operaciones_directas COMMA operacion_aritmetica
+                            | operacion_aritmetica
     '''
     if len(t) == 2:
         t[0] = [t[1]]
