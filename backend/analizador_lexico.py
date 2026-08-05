@@ -140,7 +140,7 @@ def t_CADENA(t):
     return t
 
 def t_RAWSTRING(t):
-    r'r#"([^"]|"(?!#))*"#|"[^"]*"'
+    r'r\#"([^"]|"(?!\#))*"\#|r"[^"]*"'
     if t.value.startswith('r#"'):
         t.value = t.value[3:-2]   ## r#"{contenido}"# → contenido
     else:
