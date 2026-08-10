@@ -7,6 +7,7 @@ from backend.sintax.call_func import *
 from backend.sintax.func_emb_vars import *
 from backend.sintax.funciones import *
 from backend.sintax.impresion import *
+from backend.sintax.instance_struct import *
 from backend.sintax.logicos import *
 from backend.sintax.relacionales import *
 from backend.sintax.struct import *
@@ -52,6 +53,7 @@ def p_tipo_dato(t):
                  | DT_BOOL
                  | DT_CHARACTER
                  | DT_STRING
+                 | tipo_array
     '''
     t[0] = t[1]
 
@@ -64,6 +66,8 @@ def p_expresion(t):
                  | funciones_embebidas_vars
                  | llamar_funcion
                  | decString
+                 | instanciar_struct
+                 | asignar_params_struct
     '''
     t[0] = t[1]
 
@@ -83,6 +87,10 @@ def p_arrays(t):
     else:
         t[1].append(t[3])
         t[0] = t[1]
+
+def p_tipo_array(t):
+    '''tipo_array : OPEN_BRACKET tipo_dato SEMICOLON NUMERO_ENTERO CLOSE_BRACKET
+    '''
 
 def p_literales(t):
     '''literales : NUMERO_ENTERO
