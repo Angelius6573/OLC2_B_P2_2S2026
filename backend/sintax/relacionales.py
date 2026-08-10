@@ -14,5 +14,8 @@ def p_operador_relacional(t):
     '''operador_relacional : ID
                            | booleano
                            | operacion_aritmetica
+                           | contains_var
+                           | split_var
+                           | reverse_var
                            | OPEN_PAR operacion_relacional CLOSE_PAR
     '''
