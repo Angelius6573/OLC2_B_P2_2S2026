@@ -1,10 +1,14 @@
 import ply.yacc as yacc
 from backend.analizador_lexico import tokens
 
+from backend.sintax.Strings import *
+from backend.sintax.aritmetica import *
 from backend.sintax.funciones import *
 from backend.sintax.impresion import *
-from backend.sintax.aritmetica import *
+from backend.sintax.logicos import *
+from backend.sintax.relacionales import *
 from backend.sintax.struct import *
+from backend.sintax.variables import *
 
 from backend.ast import Programa
 
@@ -52,9 +56,13 @@ def p_tipo_dato(t):
 def p_expresion(t):
     '''expresion : literales
                  | ID
-                 | operaciones_aritmeticas
-                 | operaciones_logicos
+                 | operacion_aritmetica
+                 | operacion_relacional
+                 | operacion_logica
                  | funciones_embebidas_vars
+                 | llamar_funcion
+                 | decString
+                 | literal_arreglo
                  | acceso_array
                  | params_struct
                  | new_instance_struct
@@ -68,11 +76,34 @@ def p_literales(t):
                  | CADENA
     '''
 
+def p_funciones_embebidas_vars(t):
+    '''funciones_embebidas_vars : typeof_var
+                                | random_var
+                                | len_var
+                                | contains_var
+                                | replace_var
+                                | split_var
+                                | to_upp_var
+                                | to_low_var
+                                | reverse_var
+    '''
+
 def p_booleano(t):
     '''booleano : TRUE
                 | FALSE
     '''
     t[0] = t[1]
+
+def p_only_enteros(t):
+    '''only_enteros : ID
+                    | NUMERO_ENTERO
+    '''
+    t[0] = t[1]
+
+def p_tipo_cadena(t):
+    '''tipo_cadena : CADENA
+                   | RAWSTRING
+    '''
 
 def p_empty(t):
     'empty :'
