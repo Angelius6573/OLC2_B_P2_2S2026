@@ -7,14 +7,12 @@ def p_operacion_relacional(t):
                             | operacion_relacional LTE operador_relacional
                             | operacion_relacional GT operador_relacional
                             | operacion_relacional LT operador_relacional
+                            | operador_relacional
     '''
 
 def p_operador_relacional(t):
     '''operador_relacional : ID
                            | booleano
-                           | NUMERO_ENTERO
-                           | NUMERO_FLOAT
-                           | CADENA
-                           | CARACTER
+                           | operacion_aritmetica
                            | OPEN_PAR operacion_relacional CLOSE_PAR
     '''
