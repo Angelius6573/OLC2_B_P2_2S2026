@@ -9,13 +9,13 @@ def p_tipo_dec_string(t):
     '''
 
 def p_from_directo(t):
-    'from_directo : FROMSTRING OPEN_PAR tipo_cadena CLOSE_PAR SEMICOLON'
+    'from_directo : FROMSTRING OPEN_PAR tipo_cadena CLOSE_PAR'
 
 def p_new_posterior(t):
-    'new_posterior : NEWSTRING OPEN_PAR CLOSE_PAR SEMICOLON'
+    'new_posterior : NEWSTRING OPEN_PAR CLOSE_PAR'
 
 def p_asignar_valor_string(t):
-    'asignar_valor_string : ID DOT PUSH_STR OPEN_PAR tipo_cadena CLOSE_PAR SEMICOLON'
+    'asignar_valor_string : ID DOT PUSH_STR OPEN_PAR tipo_cadena CLOSE_PAR'
 
 def p_tipo_cadena(t):
     '''tipo_cadena : CADENA
