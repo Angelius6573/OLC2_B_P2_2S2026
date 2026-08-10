@@ -1,0 +1,1 @@
+/home/angel/Escritorio/6to.\ Semestre/0781\ [Organización\ de\ Lenguajes\ y\ Compiladores\ 2]/Laboratorio/OxigenScript/OxigenScript/target/debug/OxigenScript: /home/angel/Escritorio/6to.\ Semestre/0781\ [Organización\ de\ Lenguajes\ y\ Compiladores\ 2]/Laboratorio/OxigenScript/OxigenScript/src/main.rs
