@@ -27,3 +27,8 @@ class NumeroFloat(Nodo):
     def __init__(self, valor):
         super().__init__()
         self.valor = float(valor)
+
+class Cadena(Nodo):
+    def __init__(self, string):
+        super().__init__()
+        self.string = str(string)

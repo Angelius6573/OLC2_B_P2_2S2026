@@ -1,6 +1,6 @@
 from backend.analizador_lexico import tokens
 
-from backend.ast_modular.aritmetica import OperacionBinaria, OperacionUnaria, Variable, NumeroEntero, NumeroFloat
+from backend.ast_modular.aritmetica import OperacionBinaria, OperacionUnaria, Variable, NumeroEntero, NumeroFloat, Cadena
 
 def p_operacion_aritmetica(t):
     '''operacion_aritmetica : operacion_aritmetica MINUS operadores_multiplicativos
@@ -36,6 +36,7 @@ def p_operando(t):
     '''operando : ID
                 | NUMERO_ENTERO
                 | NUMERO_FLOAT
+                | CADENA
                 | OPEN_PAR operacion_aritmetica CLOSE_PAR
     '''
     match t.slice[1].type:
@@ -45,6 +46,8 @@ def p_operando(t):
             t[0] = NumeroEntero(valor=t[1])
         case 'NUMERO_FLOAT':
             t[0] = NumeroFloat(valor=t[1])
+        case 'CADENA':
+            t[0] = Cadena(string=t[1])
         case 'OPEN_PAR':
             t[0] = t[2] # No nos interesan los parentesis
         case _:

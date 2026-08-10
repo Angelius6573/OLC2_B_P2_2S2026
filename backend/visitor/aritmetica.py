@@ -20,3 +20,6 @@ class VisitarAritmetica(VisitarGrafo):
 
     def visitar_NumeroFloat(self, nodo):
         return self._crear_nodo(f'NumeroFloat({nodo.valor})')
+
+    def visitar_Cadena(self, nodo):
+        return self._crear_nodo(f'String({nodo.string})')
