@@ -65,5 +65,6 @@ def p_instrucciones(t):
 def p_instruccion(t):
     '''instruccion : sentencia_imprimir
                    | declaracion_variable
+                   | corto_circuito
     '''
     t[0] = t[1]

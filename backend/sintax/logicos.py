@@ -1,18 +1,20 @@
 from backend.analizador_lexico import tokens
 
-def p_operadores_logicos(t):
-    '''operadores_logicos : operadores_logicos EQUAL operador_logico
-                          | operadores_logicos NO_EQUAL operador_logico
-                          | operadores_logicos GTE operador_logico
-                          | operadores_logicos LTE operador_logico
-                          | operadores_logicos GT operador_logico
-                          | operadores_logicos LT operador_logico
+def p_operacion_logica(t):
+    '''operacion_logica : operacion_logica OR operacion_logica_and
+                        | operacion_logica_and
     '''
 
-def p_operador_logico(t):
-    '''operador_logico : ID
-                       | booleano
-                       | NUMERO_ENTERO
-                       | NUMERO_FLOAT
-                       | OPEN_PAR operadores_logicos CLOSE_PAR
+def p_operacion_logica_and(t):
+    '''operacion_logica_and : operacion_logica_and AND operacion_logica_not
+                            | operacion_logica_not
+    '''
+
+def p_operacion_logica_not(t):
+    '''operacion_logica_not : NOT operacion_logica_not
+                            | operacion_relacional
+    '''
+
+def p_corto_circuito(t):
+    '''corto_circuito : operacion_logica SEMICOLON
     '''
