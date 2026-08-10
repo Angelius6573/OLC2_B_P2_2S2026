@@ -13,8 +13,9 @@ def p_operacion_logica_and(t):
 def p_operacion_logica_not(t):
     '''operacion_logica_not : NOT operacion_logica_not
                             | operacion_relacional
+                            | llamar_funcion
     '''
 
 def p_corto_circuito(t):
-    '''corto_circuito : operacion_logica SEMICOLON
+    '''corto_circuito : operacion_logica
     '''
