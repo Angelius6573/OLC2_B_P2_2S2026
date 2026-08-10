@@ -37,6 +37,13 @@ def p_operando(t):
                 | NUMERO_ENTERO
                 | NUMERO_FLOAT
                 | CADENA
+                | typeof_var
+                | random_var
+                | len_var
+                | replace_var
+                | to_upp_var
+                | to_low_var
+                | llamar_funcion
                 | OPEN_PAR operacion_aritmetica CLOSE_PAR
     '''
     match t.slice[1].type:
