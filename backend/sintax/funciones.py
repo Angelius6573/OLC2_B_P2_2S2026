@@ -63,8 +63,11 @@ def p_instrucciones(t):
 # instruccion actua a modo de enrutador en la gramática, de modo que podemos seguir agregando
 # sentencias sin preocuparnos por reasignar a t[0] en cada caso
 def p_instruccion(t):
-    '''instruccion : sentencia_imprimir
-                   | declaracion_variable
-                   | corto_circuito
+    '''instruccion : sentencia_imprimir SEMICOLON
+                   | llamar_funcion SEMICOLON
+                   | declaracion_variable SEMICOLON
+                   | corto_circuito SEMICOLON
+                   | asignar_valor_string SEMICOLON
+                   | ID ASSIGN expresion SEMICOLON
     '''
     t[0] = t[1]

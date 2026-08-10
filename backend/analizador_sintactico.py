@@ -3,6 +3,8 @@ from backend.analizador_lexico import tokens
 
 from backend.sintax.Strings import *
 from backend.sintax.aritmetica import *
+from backend.sintax.call_func import *
+from backend.sintax.func_emb_vars import *
 from backend.sintax.funciones import *
 from backend.sintax.impresion import *
 from backend.sintax.logicos import *
@@ -62,11 +64,25 @@ def p_expresion(t):
                  | funciones_embebidas_vars
                  | llamar_funcion
                  | decString
-                 | literal_arreglo
-                 | acceso_array
-                 | params_struct
-                 | new_instance_struct
     '''
+    t[0] = t[1]
+
+def p_nuevo_array(t):
+    'nuevo_array : OPEN_BRACKET arrays CLOSE_BRACKET'
+    if t[2] is None:
+        t[0] = []
+    else:
+        t[0] = t[2]
+
+def p_arrays(t):
+    '''arrays : arrays COMMA literales
+              | literales
+    '''
+    if len(t) == 2:
+        t[0] = [t[1]]
+    else:
+        t[1].append(t[3])
+        t[0] = t[1]
 
 def p_literales(t):
     '''literales : NUMERO_ENTERO
@@ -74,7 +90,10 @@ def p_literales(t):
                  | booleano
                  | CARACTER
                  | CADENA
+                 | RAWSTRING
+                 | nuevo_array
     '''
+    t[0] = t[1]
 
 def p_funciones_embebidas_vars(t):
     '''funciones_embebidas_vars : typeof_var
@@ -87,6 +106,7 @@ def p_funciones_embebidas_vars(t):
                                 | to_low_var
                                 | reverse_var
     '''
+    t[0] = t[1]
 
 def p_booleano(t):
     '''booleano : TRUE
@@ -104,6 +124,7 @@ def p_tipo_cadena(t):
     '''tipo_cadena : CADENA
                    | RAWSTRING
     '''
+    t[0] = t[1]
 
 def p_empty(t):
     'empty :'
