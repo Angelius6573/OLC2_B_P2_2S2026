@@ -13,5 +13,5 @@ def p_param_struct(t):
 
 def p_asignar_params_struct(t):
     '''asignar_params_struct : asignar_params_struct DOT ID
-                             | ID
+                             | ID DOT ID
     '''
