@@ -15,6 +15,7 @@ from backend.sintax.struct import *
 from backend.sintax.variables import *
 
 from backend.ast import Programa
+from backend.ast_modular.aritmetica import NumeroEntero, Variable
 
 precedence = (
     ('left', 'OR'),
@@ -34,6 +35,7 @@ def p_init(t):
 def p_programa(t):
     '''programa : programa declaracion_global
                 | declaracion_global
+                | empty
     '''
     if len(t) == 3:
         t[1].append(t[2])
@@ -59,41 +61,11 @@ def p_tipo_dato(t):
     t[0] = t[1]
 
 def p_expresion(t):
-    '''expresion : literales
-                 | ID
-                 | operacion_aritmetica
-                 | operacion_relacional
-                 | operacion_logica
-                 | funciones_embebidas_vars
-                 | llamar_funcion
+    '''expresion : operacion_logica
                  | decString
                  | instanciar_struct
                  | asignar_params_struct
                  | acceder_indice_array
-    '''
-    t[0] = t[1]
-
-def p_literales(t):
-    '''literales : NUMERO_ENTERO
-                 | NUMERO_FLOAT
-                 | booleano
-                 | CARACTER
-                 | CADENA
-                 | RAWSTRING
-                 | nuevo_array
-    '''
-    t[0] = t[1]
-
-def p_funciones_embebidas_vars(t):
-    '''funciones_embebidas_vars : typeof_var
-                                | random_var
-                                | len_var
-                                | contains_var
-                                | replace_var
-                                | split_var
-                                | to_upp_var
-                                | to_low_var
-                                | reverse_var
     '''
     t[0] = t[1]
 
@@ -107,13 +79,10 @@ def p_only_enteros(t):
     '''only_enteros : ID
                     | NUMERO_ENTERO
     '''
-    t[0] = t[1]
-
-def p_tipo_cadena(t):
-    '''tipo_cadena : CADENA
-                   | RAWSTRING
-    '''
-    t[0] = t[1]
+    if t.slice[1].type == 'ID':
+        t[0] = Variable(id=t[1])
+    else:
+        t[0] = NumeroEntero(valor=t[1])
 
 def p_empty(t):
     'empty :'

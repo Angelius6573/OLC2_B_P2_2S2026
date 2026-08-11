@@ -13,3 +13,9 @@ class NombreFuncion(Nodo):
         super().__init__()
         self.nombre_conjunto = nombre_conjunto
         self.nombre_funcion = nombre_funcion
+
+class LlamadaFuncion(Nodo):
+    def __init__(self, nombre_funcion, parametros):
+        super().__init__()
+        self.nombre_funcion = nombre_funcion
+        self.parametros = parametros

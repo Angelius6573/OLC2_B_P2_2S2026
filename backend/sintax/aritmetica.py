@@ -36,7 +36,11 @@ def p_operando(t):
     '''operando : ID
                 | NUMERO_ENTERO
                 | NUMERO_FLOAT
+                | CARACTER
                 | CADENA
+                | RAWSTRING
+                | booleano
+                | nuevo_array
                 | typeof_var
                 | random_var
                 | len_var
@@ -58,6 +62,6 @@ def p_operando(t):
         case 'OPEN_PAR':
             t[0] = t[2] # No nos interesan los parentesis
         case _:
-            print(f"Token inesperado: {t.slice[1].type}")
+            t[0] = t[1] # El resto de alternativas ya construyen su propio nodo
 
 
