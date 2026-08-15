@@ -19,3 +19,8 @@ class LlamadaFuncion(Nodo):
         super().__init__()
         self.nombre_funcion = nombre_funcion
         self.parametros = parametros
+
+class Return(Nodo):
+    def __init__(self, valor):
+        super().__init__()
+        self.valor = valor

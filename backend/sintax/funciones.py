@@ -1,5 +1,5 @@
 from backend.analizador_lexico import tokens
-from backend.ast_modular.funciones import DeclaracionFuncion, NombreFuncion
+from backend.ast_modular.funciones import DeclaracionFuncion, NombreFuncion, Return
 
 def p_declaracion_funcion(t):
     'declaracion_funcion : FUNCTION nombre_funcion OPEN_PAR parametros_funcion CLOSE_PAR valor_retorno bloque_ambito'
@@ -68,6 +68,22 @@ def p_instruccion(t):
                    | declaracion_variable SEMICOLON
                    | corto_circuito SEMICOLON
                    | asignar_valor_string SEMICOLON
-                   | ID ASSIGN expresion SEMICOLON
+                   | asignacion_variable
+                   | condicional
+                   | bucle_while
+                   | bucle_loop
+                   | bucle_for
+                   | return_stmt
+                   | break_stmt
+                   | continue_stmt
     '''
     t[0] = t[1]
+
+def p_return_stmt(t):
+    '''return_stmt : RETURN expresion SEMICOLON
+                   | RETURN SEMICOLON
+    '''
+    if len(t) == 4:
+        t[0] = Return(valor=t[2])
+    else:
+        t[0] = Return(valor=None)

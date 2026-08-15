@@ -2,6 +2,9 @@ from graphviz import Digraph
 from backend.recorrer_ast import RecorrerAST
 from backend.ast import Nodo
 import subprocess
+import sys
+
+sys.setrecursionlimit(10000)
 
 class VisitarGrafo(RecorrerAST):
     def __init__(self):

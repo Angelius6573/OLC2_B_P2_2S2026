@@ -90,6 +90,7 @@ punctuators = {
     'COMMA' : r'\,',
     'COLON' : r':',
     'SEMICOLON' : r'\;',
+    'AMPERSAND' : r'&',
 }
 
 # Con esto se deshace el código repetitivo de los for para cada array

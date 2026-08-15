@@ -1,5 +1,5 @@
 from backend.analizador_lexico import tokens
-from backend.ast_modular.variables import DeclaracionVariable
+from backend.ast_modular.variables import Asignacion, DeclaracionVariable
 
 def p_declaracion_variable(t):
     'declaracion_variable : var_mutable ID tipo_declaracion'
@@ -24,14 +24,18 @@ def p_tipo_declaracion(t):
     t[0] = t[1]
 
 def p_var_implicita(t):
-    'var_implicita : ASSIGN expresion'
+    'var_implicita : ASSIGN valor'
     t[0] = (None, t[2])
 
 def p_var_explicita(t):
     '''var_explicita : COLON tipo_dato
-                     | COLON tipo_dato ASSIGN expresion
+                     | COLON tipo_dato ASSIGN valor
     '''
     if len(t) == 3:
         t[0] = (t[2], None)
     else:
         t[0] = (t[2], t[4])
+
+def p_asignacion_variable(t):
+    'asignacion_variable : ID ASSIGN valor SEMICOLON'
+    t[0] = Asignacion(nombre=t[1], valor=t[3])

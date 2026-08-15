@@ -5,3 +5,10 @@ class AccederIndice(Nodo):
         super().__init__()
         self.objetivo = objetivo
         self.indices = indices
+
+class Slice(Nodo):
+    def __init__(self, objetivo, inicio, fin):
+        super().__init__()
+        self.objetivo = objetivo
+        self.inicio = inicio
+        self.fin = fin

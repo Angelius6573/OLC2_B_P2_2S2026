@@ -18,9 +18,6 @@ def p_operacion_relacional(t):
 
 def p_operador_relacional(t):
     '''operador_relacional : operacion_aritmetica
-                           | contains_var
-                           | split_var
-                           | reverse_var
                            | OPEN_PAR operacion_relacional CLOSE_PAR
     '''
     if len(t) == 2:

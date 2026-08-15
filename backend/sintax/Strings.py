@@ -1,6 +1,6 @@
 from backend.analizador_lexico import tokens
 from backend.ast_modular.Strings import DeclaracionString
-from backend.ast_modular.aritmetica import Cadena, Variable
+from backend.ast_modular.aritmetica import Cadena
 from backend.ast_modular.funciones_embebidas import FuncionEmbebida
 
 def p_decString(t):
@@ -22,10 +22,10 @@ def p_new_posterior(t):
     t[0] = DeclaracionString(metodo='new', valor=None)
 
 def p_asignar_valor_string(t):
-    'asignar_valor_string : ID DOT PUSH_STR OPEN_PAR tipo_cadena CLOSE_PAR'
+    'asignar_valor_string : operando DOT PUSH_STR OPEN_PAR tipo_cadena CLOSE_PAR'
     t[0] = FuncionEmbebida(
         nombre='push_str',
-        objetivo=Variable(id=t[1]),
+        objetivo=t[1],
         argumentos=[Cadena(string=t[5])]
     )
 

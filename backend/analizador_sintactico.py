@@ -4,7 +4,9 @@ from backend.analizador_lexico import tokens
 from backend.sintax.Strings import *
 from backend.sintax.aritmetica import *
 from backend.sintax.arrays import *
+from backend.sintax.bucles import *
 from backend.sintax.call_func import *
+from backend.sintax.condicionales import *
 from backend.sintax.func_emb_vars import *
 from backend.sintax.funciones import *
 from backend.sintax.impresion import *
@@ -63,9 +65,6 @@ def p_tipo_dato(t):
 def p_expresion(t):
     '''expresion : operacion_logica
                  | decString
-                 | instanciar_struct
-                 | asignar_params_struct
-                 | acceder_indice_array
     '''
     t[0] = t[1]
 

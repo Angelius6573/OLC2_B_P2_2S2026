@@ -26,6 +26,6 @@ def p_params_func_called(t):
         t[0] = []
 
 def p_parametro_call(t):
-    '''parametro_call : operando
+    '''parametro_call : valor
     '''
     t[0] = t[1]

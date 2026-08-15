@@ -7,3 +7,9 @@ class DeclaracionVariable(Nodo):
         self.mutabilidad = mutabilidad
         self.tipo = tipo
         self.valor = valor
+
+class Asignacion(Nodo):
+    def __init__(self, nombre, valor):
+        super().__init__()
+        self.nombre = nombre
+        self.valor = valor
