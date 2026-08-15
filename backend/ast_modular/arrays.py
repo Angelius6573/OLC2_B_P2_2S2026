@@ -12,3 +12,15 @@ class Slice(Nodo):
         self.objetivo = objetivo
         self.inicio = inicio
         self.fin = fin
+
+class Repetidor(Nodo):
+    def __init__(self, valor, cantidad):
+        super().__init__()
+        self.valor = valor
+        self.cantidad = cantidad
+
+class AsignarIndice(Nodo):
+    def __init__(self, objetivo, valor):
+        super().__init__()
+        self.objetivo = objetivo
+        self.valor = valor

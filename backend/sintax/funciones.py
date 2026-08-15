@@ -69,6 +69,7 @@ def p_instruccion(t):
                    | corto_circuito SEMICOLON
                    | asignar_valor_string SEMICOLON
                    | asignacion_variable
+                   | asignacion_indice
                    | condicional
                    | bucle_while
                    | bucle_loop
