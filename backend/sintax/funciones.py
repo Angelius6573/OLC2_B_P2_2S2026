@@ -83,6 +83,12 @@ def p_instruccion(t):
     '''
     t[0] = t[1]
 
+def p_instruccion_error(t):
+    '''instruccion : error SEMICOLON
+                   | error CLOSE_BRACE
+    '''
+    t[0] = None
+
 def p_return_stmt(t):
     '''return_stmt : RETURN expresion SEMICOLON
                    | RETURN SEMICOLON

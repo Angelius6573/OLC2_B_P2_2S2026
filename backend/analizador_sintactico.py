@@ -1,5 +1,6 @@
 import ply.yacc as yacc
-from backend.analizador_lexico import tokens
+from backend.analizador_lexico import contar_columna, lexema_tipo, lexer, tokens
+from backend.errores import reportar
 
 from backend.sintax.Strings import *
 from backend.sintax.aritmetica import *
@@ -30,6 +31,16 @@ precedence = (
     ('right', 'NOT', 'NEGACION_UNARIA') # NEGACION_UNARIA es un token invent solo para la precedencia, sigue siendo el "-"
 )
 
+def tokens_esperados():
+    estado = getattr(parser, 'state', None)
+    if estado is None:
+        return 'nada'
+    acciones = parser.action.get(estado, {})
+    nombres = sorted(tok for tok in acciones if tok not in ('error', '$end'))
+    if not nombres:
+        return 'nada'
+    return " o ".join(lexema_tipo(nombre) for nombre in nombres)
+
 def p_init(t):
     'init : programa'
     t[0] = fijar_ubicacion(t, Programa(declaraciones=t[1]))
@@ -51,8 +62,13 @@ def p_programa(t):
 def p_declaracion_global(t):
     '''declaracion_global : declaracion_funcion
                           | declaracion_struct
+                          | error SEMICOLON
+                          | error CLOSE_BRACE
     '''
-    t[0] = t[1]
+    if len(t) == 2:
+        t[0] = t[1]
+    else:
+        t[0] = None
 
 # Se agrega ID porque los structs mueren, es mejor sintetizarlos como tipos de datos y listo
 def p_tipo_dato(t):
@@ -94,8 +110,11 @@ def p_empty(t):
 
 def p_error(t):
     if t:
-        print(f"Error sintáctico en '{t.value}' línea {t.lineno}")
+        columna = contar_columna(t.lexer.lexdata, t)
+        reportar('Sintactico', t.lineno, columna,
+                 f"Se esperaba '{tokens_esperados()}' pero se encontró '{t.value}'")
     else:
-        print("Error sintáctico: EOF inesperado")
+        reportar('Sintactico', lexer.lineno, 0,
+                 f"Se esperaba '{tokens_esperados()}' pero se encontró 'nada'")
 
 parser = yacc.yacc(start='init')

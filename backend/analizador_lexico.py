@@ -1,6 +1,8 @@
 import ply.lex as lex
 from itertools import chain
 
+from backend.errores import reportar
+
 reserved_words = {
     'fn' : 'FUNCTION',
     'let' : 'LET',
@@ -205,8 +207,32 @@ def contar_columna(input, token):
     linea = input.rfind('\n', 0, token.lexpos) + 1
     return (token.lexpos - linea) + 1
 
+LEXEMA_TIPO = {
+    **{v: k for k, v in reserved_words.items()},
+    **{v: k for k, v in embedded_functions.items()},
+    **{nombre: patron.replace('\\', '') for nombre, patron in chain(
+        match_tokens.items(),
+        relationals.items(),
+        logics.items(),
+        assignments.items(),
+        arithmetics.items(),
+        delimiters.items(),
+        punctuators.items())},
+    'PRINTLN': 'println!',
+    'MATCH_BASE': '_',
+    'ID': 'identificador',
+    'NUMERO_ENTERO': 'número entero',
+    'NUMERO_FLOAT': 'número decimal',
+    'CARACTER': 'carácter',
+    'CADENA': 'cadena',
+    'RAWSTRING': 'cadena cruda',
+}
+
+def lexema_tipo(tipo):
+    return LEXEMA_TIPO.get(tipo, tipo)
+
 def t_error(t):
-    print("Carácter no permitido '%s'" % t.value[0])
+    reportar('Lexico', t.lineno, contar_columna(t.lexer.lexdata, t), f"Carácter no reconocido '{t.value[0]}'")
     t.lexer.skip(1)
 
 lexer = lex.lex()
