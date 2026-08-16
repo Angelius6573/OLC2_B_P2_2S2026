@@ -54,8 +54,10 @@ def p_declaracion_global(t):
     '''
     t[0] = t[1]
 
+# Se agrega ID porque los structs mueren, es mejor sintetizarlos como tipos de datos y listo
 def p_tipo_dato(t):
-    '''tipo_dato : DT_INT
+    '''tipo_dato : ID
+                 | DT_INT
                  | DT_FLOAT
                  | DT_BOOL
                  | DT_CHARACTER

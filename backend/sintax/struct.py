@@ -37,7 +37,6 @@ def p_parametros_struct(t):
     ))
 
 def p_td_parametro_struct(t):
-    '''td_parametro_struct : ID
-                           | tipo_dato
+    '''td_parametro_struct : tipo_dato
     '''
     t[0] = t[1]
