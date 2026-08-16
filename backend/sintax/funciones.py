@@ -78,6 +78,7 @@ def p_instruccion(t):
                    | return_stmt
                    | break_stmt
                    | continue_stmt
+                   | match_expr
     '''
     t[0] = t[1]
 

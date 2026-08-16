@@ -13,6 +13,7 @@ from backend.sintax.impresion import *
 from backend.sintax.instance_struct import *
 from backend.sintax.helpers import fijar_ubicacion
 from backend.sintax.logicos import *
+from backend.sintax.match import *
 from backend.sintax.relacionales import *
 from backend.sintax.struct import *
 from backend.sintax.variables import *
@@ -66,6 +67,7 @@ def p_tipo_dato(t):
 def p_expresion(t):
     '''expresion : operacion_logica
                  | decString
+                 | match_expr
     '''
     t[0] = t[1]
 

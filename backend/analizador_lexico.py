@@ -41,6 +41,10 @@ embedded_functions = {
     'push_str' : 'PUSH_STR'
 }
 
+match_tokens = {
+    'FAT_ARROW' : r'=>',
+}
+
 # Primero los tokens que cuyo lexema tenga una longitud mayor que 1
 relationals = {
     'EQUAL' : r'==',
@@ -94,7 +98,8 @@ punctuators = {
 }
 
 # Con esto se deshace el código repetitivo de los for para cada array
-for token, patron in chain(relationals.items(),
+for token, patron in chain(match_tokens.items(),
+                           relationals.items(),
                            logics.items(),
                            assignments.items(),
                            arithmetics.items(),
@@ -104,6 +109,7 @@ for token, patron in chain(relationals.items(),
 
 # Lista de tuplas de los tokens, nombre y ER
 conjunto_tokens = list(chain(
+    match_tokens.keys(),
     relationals.keys(),
     logics.keys(),
     assignments.keys(),
@@ -123,6 +129,7 @@ tokens = (
     'CADENA',
     'RAWSTRING',
     'PRINTLN',
+    'MATCH_BASE',
     'ID',
 )
 
@@ -171,6 +178,10 @@ def t_NUMERO_ENTERO(t):
         t.value = 0
     return t
 
+def t_MATCH_BASE(t):
+    r'_(?![a-zA-Z0-9_])'
+    return t
+
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
     t.type = conjunto_reservados.get(t.value, 'ID')
@@ -200,3 +211,11 @@ def t_error(t):
 
 lexer = lex.lex()
 # lexer = lex.lex(reflags = re.IGNORECASE) <- En caso de que un error de importación de lexico a sintáctico, maybe hay que tener esto
+
+# PLY no reinicia el lineno al llamar input(); sin esto, parses consecutivos
+# en el mismo proceso acumulan número de línea.
+_input_original = lexer.input
+def input_con_lineno_reset(data):
+    lexer.lineno = 1
+    return _input_original(data)
+lexer.input = input_con_lineno_reset
