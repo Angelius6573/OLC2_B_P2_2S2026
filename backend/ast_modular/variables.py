@@ -13,3 +13,10 @@ class Asignacion(Nodo):
         super().__init__()
         self.nombre = nombre
         self.valor = valor
+
+class AsignacionCompuesta(Nodo):
+    def __init__(self, nombre, operador, valor):
+        super().__init__()
+        self.nombre = nombre
+        self.operador = operador
+        self.valor = valor

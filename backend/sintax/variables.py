@@ -1,5 +1,5 @@
 from backend.analizador_lexico import tokens
-from backend.ast_modular.variables import Asignacion, DeclaracionVariable
+from backend.ast_modular.variables import Asignacion, AsignacionCompuesta, DeclaracionVariable
 from backend.sintax.helpers import fijar_ubicacion
 
 def p_declaracion_variable(t):
@@ -40,3 +40,16 @@ def p_var_explicita(t):
 def p_asignacion_variable(t):
     'asignacion_variable : ID ASSIGN valor SEMICOLON'
     t[0] = fijar_ubicacion(t, Asignacion(nombre=t[1], valor=t[3]))
+
+def p_asignacion_compuesta(t):
+    'asignacion_compuesta : ID asignador_compuesto operacion_aritmetica SEMICOLON'
+    t[0] = fijar_ubicacion(t, AsignacionCompuesta(nombre=t[1], operador=t[2], valor=t[3]))
+
+def p_asignador_compuesto(t):
+    '''asignador_compuesto : ADD_ASSIGN
+                           | MINUS_ASSIGN
+                           | MULTI_ASSIGN
+                           | DIV_ASSIGN
+                           | MOD_ASSIGN
+    '''
+    t[0] = t[1]
