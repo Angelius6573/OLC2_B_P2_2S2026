@@ -1,15 +1,16 @@
 from backend.analizador_lexico import tokens
 from backend.ast_modular.variables import Asignacion, DeclaracionVariable
+from backend.sintax.helpers import fijar_ubicacion
 
 def p_declaracion_variable(t):
     'declaracion_variable : var_mutable ID tipo_declaracion'
     tipo, valor = t[3]
-    t[0] = DeclaracionVariable(
+    t[0] = fijar_ubicacion(t, DeclaracionVariable(
         nombre=t[2],
         mutabilidad=t[1],
         tipo=tipo,
         valor=valor
-    )
+    ))
 
 def p_var_mutable(t):
     '''var_mutable : LET
@@ -38,4 +39,4 @@ def p_var_explicita(t):
 
 def p_asignacion_variable(t):
     'asignacion_variable : ID ASSIGN valor SEMICOLON'
-    t[0] = Asignacion(nombre=t[1], valor=t[3])
+    t[0] = fijar_ubicacion(t, Asignacion(nombre=t[1], valor=t[3]))

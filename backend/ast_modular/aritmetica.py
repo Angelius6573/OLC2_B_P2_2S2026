@@ -32,3 +32,13 @@ class Cadena(Nodo):
     def __init__(self, string):
         super().__init__()
         self.string = str(string)
+
+class Caracter(Nodo):
+    def __init__(self, valor):
+        super().__init__()
+        self.valor = valor
+
+class Booleano(Nodo):
+    def __init__(self, valor):
+        super().__init__()
+        self.valor = bool(valor)

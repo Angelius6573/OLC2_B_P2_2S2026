@@ -1,10 +1,11 @@
 from backend.analizador_lexico import tokens
 
 from backend.ast_modular.funciones import LlamadaFuncion
+from backend.sintax.helpers import fijar_ubicacion
 
 def p_llamar_funcion(t):
     'llamar_funcion : nombre_func_called OPEN_PAR params_func_called CLOSE_PAR'
-    t[0] = LlamadaFuncion(nombre_funcion=t[1], parametros=t[3])
+    t[0] = fijar_ubicacion(t, LlamadaFuncion(nombre_funcion=t[1], parametros=t[3]))
 
 def p_nombre_func_called(t):
     '''nombre_func_called : ID

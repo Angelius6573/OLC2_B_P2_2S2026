@@ -11,13 +11,14 @@ from backend.sintax.func_emb_vars import *
 from backend.sintax.funciones import *
 from backend.sintax.impresion import *
 from backend.sintax.instance_struct import *
+from backend.sintax.helpers import fijar_ubicacion
 from backend.sintax.logicos import *
 from backend.sintax.relacionales import *
 from backend.sintax.struct import *
 from backend.sintax.variables import *
 
 from backend.ast import Programa
-from backend.ast_modular.aritmetica import NumeroEntero, Variable
+from backend.ast_modular.aritmetica import Booleano, NumeroEntero, Variable
 
 precedence = (
     ('left', 'OR'),
@@ -30,7 +31,7 @@ precedence = (
 
 def p_init(t):
     'init : programa'
-    t[0] = Programa(declaraciones=t[1])
+    t[0] = fijar_ubicacion(t, Programa(declaraciones=t[1]))
 
 # programa siempre espera una lista de tuplas, esto es conveniente
 # a la hora de desarrollar el AST
@@ -72,16 +73,16 @@ def p_booleano(t):
     '''booleano : TRUE
                 | FALSE
     '''
-    t[0] = t[1]
+    t[0] = fijar_ubicacion(t, Booleano(valor=t[1] == 'true'))
 
 def p_only_enteros(t):
     '''only_enteros : ID
                     | NUMERO_ENTERO
     '''
     if t.slice[1].type == 'ID':
-        t[0] = Variable(id=t[1])
+        t[0] = fijar_ubicacion(t, Variable(id=t[1]))
     else:
-        t[0] = NumeroEntero(valor=t[1])
+        t[0] = fijar_ubicacion(t, NumeroEntero(valor=t[1]))
 
 def p_empty(t):
     'empty :'

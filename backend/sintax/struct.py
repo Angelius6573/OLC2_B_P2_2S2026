@@ -1,12 +1,13 @@
 from backend.analizador_lexico import tokens
 from backend.ast_modular.struct import DeclaracionStruct, Parametros
+from backend.sintax.helpers import fijar_ubicacion
 
 def p_declaracion_struct(t):
     'declaracion_struct : STRUCT ID bloque_struct'
-    t[0] = DeclaracionStruct(
+    t[0] = fijar_ubicacion(t, DeclaracionStruct(
         nombre_struct=t[2],
         parametros_struct=t[3]
-    )
+    ))
 
 def p_bloque_struct(t):
     'bloque_struct : OPEN_BRACE contenido_struct CLOSE_BRACE'
@@ -30,10 +31,10 @@ def p_lista_campos_struct(t):
 
 def p_parametros_struct(t):
     'parametros_struct : ID COLON td_parametro_struct'
-    t[0] = Parametros(
+    t[0] = fijar_ubicacion(t, Parametros(
         parametro=t[1],
         tipo_parametro=t[3]
-    )
+    ))
 
 def p_td_parametro_struct(t):
     '''td_parametro_struct : ID

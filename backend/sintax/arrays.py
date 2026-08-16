@@ -1,12 +1,13 @@
 from backend.analizador_lexico import tokens
 from backend.ast_modular.arrays import AccederIndice, AsignarIndice, Repetidor
+from backend.sintax.helpers import fijar_ubicacion
 
 def p_nuevo_array(t):
     '''nuevo_array : OPEN_BRACKET arrays CLOSE_BRACKET
                    | OPEN_BRACKET valor SEMICOLON operacion_aritmetica CLOSE_BRACKET
     '''
     if len(t) == 6:
-        t[0] = Repetidor(valor=t[2], cantidad=t[4])
+        t[0] = fijar_ubicacion(t, Repetidor(valor=t[2], cantidad=t[4]))
     elif t[2] is None:
         t[0] = []
     else:
@@ -36,12 +37,12 @@ def p_asignacion_indice(t):
                          | operando OPEN_BRACKET seleccionar_indice CLOSE_BRACKET OPEN_BRACKET seleccionar_indice CLOSE_BRACKET ASSIGN valor SEMICOLON
     '''
     if len(t) == 8:
-        objetivo = AccederIndice(objetivo=t[1], indices=[t[3]])
+        objetivo = fijar_ubicacion(t, AccederIndice(objetivo=t[1], indices=[t[3]]))
         valor = t[6]
     else:
-        objetivo = AccederIndice(
-            objetivo=AccederIndice(objetivo=t[1], indices=[t[3]]),
+        objetivo = fijar_ubicacion(t, AccederIndice(
+            objetivo=fijar_ubicacion(t, AccederIndice(objetivo=t[1], indices=[t[3]])),
             indices=[t[6]]
-        )
+        ))
         valor = t[9]
-    t[0] = AsignarIndice(objetivo=objetivo, valor=valor)
+    t[0] = fijar_ubicacion(t, AsignarIndice(objetivo=objetivo, valor=valor))

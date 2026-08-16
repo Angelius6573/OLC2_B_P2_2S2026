@@ -1,14 +1,15 @@
 from backend.analizador_lexico import tokens
 from backend.ast_modular.funciones import DeclaracionFuncion, NombreFuncion, Return
+from backend.sintax.helpers import fijar_ubicacion
 
 def p_declaracion_funcion(t):
     'declaracion_funcion : FUNCTION nombre_funcion OPEN_PAR parametros_funcion CLOSE_PAR valor_retorno bloque_ambito'
-    t[0] = DeclaracionFuncion(
+    t[0] = fijar_ubicacion(t, DeclaracionFuncion(
         nombre_funcion=t[2],
         parametros_funcion=t[4],
         valor_retorno=t[6],
         bloque_ambito=t[7]
-    )
+    ))
 
 def p_nombre_funcion(t):
     '''nombre_funcion : ID
@@ -16,9 +17,9 @@ def p_nombre_funcion(t):
     '''
     match t.slice[1].type:
         case 'ID':
-            t[0] = NombreFuncion(nombre_conjunto='FUNC', nombre_funcion=t[1])
+            t[0] = fijar_ubicacion(t, NombreFuncion(nombre_conjunto='FUNC', nombre_funcion=t[1]))
         case 'MAIN':
-            t[0] = NombreFuncion(nombre_conjunto='ENTRY_POINT', nombre_funcion=t[1])
+            t[0] = fijar_ubicacion(t, NombreFuncion(nombre_conjunto='ENTRY_POINT', nombre_funcion=t[1]))
         case _:
             print(f"Token inesperado: {t.slice[1].type}")
 
@@ -85,6 +86,6 @@ def p_return_stmt(t):
                    | RETURN SEMICOLON
     '''
     if len(t) == 4:
-        t[0] = Return(valor=t[2])
+        t[0] = fijar_ubicacion(t, Return(valor=t[2]))
     else:
-        t[0] = Return(valor=None)
+        t[0] = fijar_ubicacion(t, Return(valor=None))
