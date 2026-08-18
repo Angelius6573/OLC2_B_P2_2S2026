@@ -8,7 +8,7 @@ sys.setrecursionlimit(10000)
 
 class VisitarGrafo(RecorrerAST):
     def __init__(self):
-        self.grafo = Digraph('AST', format='svg')
+        self.grafo = Digraph('AST', format='png')
         self.grafo.attr(rankdir='TB')
         self.grafo.attr('node', shape='box')
         self.contador = 0
@@ -52,15 +52,14 @@ class VisitarGrafo(RecorrerAST):
         self.grafo.edge(nodo_padre, id_hijo)
 
     def renderizar(self):
-        self.grafo.render('arbol_sintactico', format='svg')
+        self.grafo.render('arbol_sintactico', format='png')
 
         subprocess.run(
-            ["kitty", "+kitten", "icat", "arbol_sintactico.svg"],
-            check=False
+            ["kitty", "+kitten", "icat", "arbol_sintactico.png"],
+            check=False, stderr=subprocess.DEVNULL,
         )
 
-        # Eliminar este subproceso cuando lo formatee a la GUI
         subprocess.run(
-            ["rm", "arbol_sintactico", "arbol_sintactico.svg"],
-            check=True
+            ["rm", "arbol_sintactico", "arbol_sintactico.png"],
+            check=False,
         )
