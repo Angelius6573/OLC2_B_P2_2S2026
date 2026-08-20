@@ -62,13 +62,12 @@ def p_programa(t):
 def p_declaracion_global(t):
     '''declaracion_global : declaracion_funcion
                           | declaracion_struct
-                          | error SEMICOLON
-                          | error CLOSE_BRACE
     '''
-    if len(t) == 2:
-        t[0] = t[1]
-    else:
-        t[0] = None
+    t[0] = t[1]
+
+def p_declaracion_global_error(t):
+    'declaracion_global : error'
+    t[0] = None
 
 # Se agrega ID porque los structs mueren, es mejor sintetizarlos como tipos de datos y listo
 def p_tipo_dato(t):
@@ -107,6 +106,12 @@ def p_only_enteros(t):
 def p_empty(t):
     'empty :'
     t[0] = None
+
+_SYNC_TOKENS = {
+    'LET', 'IF', 'WHILE', 'FOR', 'LOOP', 'PRINTLN',
+    'RETURN', 'STRUCT', 'FUNCTION', 'MATCH', 'BREAK', 'CONTINUE',
+    'CLOSE_BRACE', 'EOF',
+}
 
 def p_error(t):
     if t:
