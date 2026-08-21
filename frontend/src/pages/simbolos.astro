@@ -1,0 +1,55 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Tabla de Simbolos - OxigenScript IDE">
+  <div style="display:flex; flex-direction:column; height:100vh;">
+    <header class="page-header">
+      <h1><img src="/logoOX.svg" alt="OxigenScript" style="height:32px;" /> OxigenScript IDE</h1>
+      <div class="nav-links">
+        <a href="/dashboard">Editor</a>
+        <a href="/errores">Errores</a>
+        <a href="/simbolos" class="active">Simbolos</a>
+        <a href="/ast">AST</a>
+        <button id="theme-toggle" class="theme-btn">Claro</button>
+      </div>
+    </header>
+    <div style="flex:1; padding:24px; overflow-y:auto;">
+      <div class="panel" style="max-width:900px; margin:0 auto;">
+        <h2 style="margin-bottom:16px; font-size:18px; color:var(--purple-400);">Tabla de Tokens</h2>
+        <div id="token-table"></div>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style is:global>
+  .theme-btn {
+    background: var(--purple-500); color: white; border: none; border-radius: 0;
+    padding: 6px 14px; cursor: pointer; font-size: 13px; font-weight: 600;
+  }
+</style>
+
+<script>
+function renderTokens() {
+  const c = document.getElementById('token-table');
+  if (!c) return;
+  const tokens = JSON.parse(localStorage.getItem('oxigen_tokens') || '[]');
+  if (tokens.length === 0) {
+    c.innerHTML = '<div style="text-align:center; padding:40px;"><p style="color:var(--dark-muted); font-style:italic;">No hay tokens para mostrar. Ejecuta un programa primero.</p></div>';
+    return;
+  }
+  const tc: Record<string,string> = { FUNCTION:'#22d3ee', LET:'#a78bfa', MUT:'#a78bfa', IF:'#f472b6', ELSE:'#f472b6', WHILE:'#fb923c', FOR:'#fb923c', LOOP:'#fb923c', RETURN:'#f87171', STRUCT:'#34d399', MATCH:'#fbbf24', BREAK:'#f87171', CONTINUE:'#f87171', PRINTLN:'#22d3ee', ID:'#e2e8f0', NUMERO_ENTERO:'#86efac', NUMERO_FLOAT:'#86efac', CADENA:'#fde68a', RAWSTRING:'#fde68a', CARACTER:'#fde68a', TRUE:'#fb923c', FALSE:'#fb923c' };
+  let html = '<table><thead><tr><th>#</th><th>Tipo</th><th>Lexema</th><th>Valor</th><th>Linea</th><th>Col</th></tr></thead><tbody>';
+  tokens.forEach((t: any, i: number) => {
+    const col = tc[t.type] || '#94a3b8';
+    html += '<tr><td style="color:var(--dark-muted);">' + (i+1) + '</td><td><span style="display:inline-block; background:' + col + '20; color:' + col + '; padding:2px 8px; font-size:12px; font-weight:600;">' + t.type + '</span></td><td style="font-weight:600;">' + t.lexema + '</td><td style="font-family:monospace;">' + t.value + '</td><td>' + t.line + '</td><td>' + t.col + '</td></tr>';
+  });
+  c.innerHTML = html + '</tbody></table>';
+}
+renderTokens();
+document.getElementById('theme-toggle')?.addEventListener('click', () => {
+  const d = document.documentElement; d.classList.toggle('dark');
+  localStorage.setItem('theme', d.classList.contains('dark') ? 'dark' : 'light');
+  document.getElementById('theme-toggle')!.textContent = d.classList.contains('dark') ? 'Oscuro' : 'Claro';
+});
+</script>

@@ -1,0 +1,199 @@
+---
+interface Props {
+  title: string;
+}
+const { title } = Astro.props;
+---
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/svg+xml" href="/logoOX.svg" />
+  <title>{title}</title>
+  <script is:inline>
+    (function() {
+      var t = localStorage.getItem('theme');
+      var dark = t ? t === 'dark' : true;
+      document.documentElement.classList.toggle('dark', dark);
+    })();
+  </script>
+</head>
+<body class="dark">
+  <slot />
+</body>
+</html>
+
+<style is:global>
+  :root {
+    --purple-400: #a78bfa;
+    --purple-500: #7c3aed;
+    --purple-600: #6d28d9;
+    --purple-700: #5b21b6;
+    --purple-800: #4c1d95;
+    --purple-900: #3b0764;
+    --dark-bg: #0f0a1a;
+    --dark-surface: #1a1028;
+    --dark-surface-2: #241838;
+    --dark-border: #362550;
+    --dark-text: #e2d9f3;
+    --dark-muted: #9580ab;
+    --light-bg: #f8f7fc;
+    --light-surface: #ffffff;
+    --light-border: #e0d8f0;
+    --light-text: #1a1028;
+    --light-muted: #6b5c82;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+  }
+
+  html.dark, html.dark body {
+    background: var(--dark-bg);
+    color: var(--dark-text);
+  }
+
+  html:not(.dark), html:not(.dark) body {
+    background: var(--light-bg);
+    color: var(--light-text);
+  }
+
+  .btn-primary {
+    background: var(--purple-500);
+    color: white;
+    border: none;
+    border-radius: 0;
+    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary:hover { background: var(--purple-600); transform: translateY(-1px); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--purple-400);
+    border: 1px solid var(--purple-500);
+    border-radius: 0;
+    padding: 8px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-secondary:hover { background: var(--purple-500); color: white; }
+
+  html:not(.dark) .btn-secondary {
+    color: var(--purple-700);
+    border-color: var(--purple-500);
+  }
+  html:not(.dark) .btn-secondary:hover {
+    background: var(--purple-500);
+    color: white;
+  }
+
+  .panel {
+    border-radius: 0;
+    padding: 16px;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  html.dark .panel {
+    background: var(--dark-surface);
+    border: 1px solid var(--dark-border);
+  }
+  html:not(.dark) .panel {
+    background: var(--light-surface);
+    border: 1px solid var(--light-border);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+
+  .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  html.dark .page-header {
+    background: var(--dark-surface);
+    border-bottom: 1px solid var(--dark-border);
+  }
+  html:not(.dark) .page-header {
+    background: var(--light-surface);
+    border-bottom: 1px solid var(--light-border);
+  }
+
+  .page-header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 0;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  html.dark .nav-links a { color: var(--dark-muted); }
+  html.dark .nav-links a:hover, html.dark .nav-links a.active {
+    color: white;
+    background: var(--purple-600);
+  }
+  html:not(.dark) .nav-links a { color: var(--light-muted); }
+  html:not(.dark) .nav-links a:hover, html:not(.dark) .nav-links a.active {
+    color: white;
+    background: var(--purple-500);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th, td {
+    padding: 10px 14px;
+    text-align: left;
+  }
+  html.dark th {
+    background: var(--dark-surface-2);
+    color: var(--purple-400);
+    font-weight: 600;
+    border-bottom: 2px solid var(--dark-border);
+  }
+  html.dark td {
+    border-bottom: 1px solid var(--dark-border);
+  }
+  html:not(.dark) th {
+    background: #f0eaf8;
+    color: var(--purple-700);
+    font-weight: 600;
+    border-bottom: 2px solid var(--light-border);
+  }
+  html:not(.dark) td {
+    border-bottom: 1px solid var(--light-border);
+  }
+</style>

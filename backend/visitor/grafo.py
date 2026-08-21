@@ -1,10 +1,13 @@
 from graphviz import Digraph
 from backend.recorrer_ast import RecorrerAST
 from backend.ast import Nodo
-import subprocess
+import os
+import time
 import sys
 
 sys.setrecursionlimit(10000)
+
+_ASSETS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'assets', 'ast')
 
 class VisitarGrafo(RecorrerAST):
     def __init__(self):
@@ -42,7 +45,6 @@ class VisitarGrafo(RecorrerAST):
 
     def _enlazador(self, nodo_padre: str, nodo_hijo) -> None:
         if isinstance(nodo_hijo, list):
-            # Los arreglos son listas Python; una lista anidada se renderiza como nodo hoja
             id_hijo = self._crear_nodo(str(nodo_hijo))
             self.grafo.edge(nodo_padre, id_hijo)
             return
@@ -51,15 +53,17 @@ class VisitarGrafo(RecorrerAST):
             raise TypeError(f'visitar() devolvió None para {type(nodo_hijo).__name__}')
         self.grafo.edge(nodo_padre, id_hijo)
 
-    def renderizar(self):
-        self.grafo.render('arbol_sintactico', format='png')
+    def renderizar(self, nombre=None):
+        os.makedirs(_ASSETS_DIR, exist_ok=True)
+        if nombre is None:
+            nombre = f'ast_{int(time.time() * 1000)}'
+        ruta = os.path.join(_ASSETS_DIR, nombre)
+        self.grafo.render(ruta, format='png', cleanup=True)
+        return f'{nombre}.png'
 
-        subprocess.run(
-            ["kitty", "+kitten", "icat", "arbol_sintactico.png"],
-            check=False, stderr=subprocess.DEVNULL,
-        )
-
-        subprocess.run(
-            ["rm", "arbol_sintactico", "arbol_sintactico.png"],
-            check=False,
-        )
+    def renderizar_a(self, ruta_completa):
+        directorio = os.path.dirname(ruta_completa)
+        if directorio:
+            os.makedirs(directorio, exist_ok=True)
+        self.grafo.render(ruta_completa, format='png', cleanup=True)
+        return f'{os.path.basename(ruta_completa)}.png'

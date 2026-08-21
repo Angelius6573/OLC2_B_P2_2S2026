@@ -1,10 +1,12 @@
 [project]
 name = "oxigenscript"
-version = "0.15.7"
+version = "1.0.0"
 description = "Intérprete de Rust usando Python+PLY"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
     "graphviz>=0.21",
     "ply>=3.11",
+    "fastapi>=0.115",
+    "uvicorn>=0.34",
 ]
