@@ -38,7 +38,7 @@ def visitar_FuncionEmbebida(self, nodo):
     argumentos = [self.visitar(a) for a in nodo.argumentos]
     objetivo = self.visitar(nodo.objetivo) if nodo.objetivo is not None else None
     resultado = _ejecutar_embebida(self, nombre, objetivo, argumentos, nodo)
-    if nombre == 'push_str' and isinstance(nodo.objetivo, Variable):
+    if isinstance(nodo.objetivo, Variable) and nombre in ('push_str', 'reverse'):
         var_nombre = nodo.objetivo.id
         v = self.ambito_actual.buscar(var_nombre)
         if v is not None:
@@ -71,7 +71,9 @@ def _ejecutar_embebida(self, nombre, objetivo, argumentos, nodo):
     if nombre == 'to_lowercase':
         return objetivo.lower() if isinstance(objetivo, str) else objetivo
     if nombre == 'reverse':
-        return objetivo[::-1] if isinstance(objetivo, str) else objetivo
+        if isinstance(objetivo, (str, list)):
+            return objetivo[::-1]
+        return objetivo
     if nombre == 'replace':
         if isinstance(objetivo, str) and len(argumentos) >= 2:
             return objetivo.replace(str(argumentos[0]), str(argumentos[1]))

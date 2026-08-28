@@ -21,6 +21,7 @@ from backend.interpreter.condicionales import visitar_Condicional
 from backend.interpreter.bucles import (
     visitar_BucleWhile, visitar_BucleLoop, visitar_BucleFor,
     visitar_Rango, visitar_Break, visitar_Continue,
+    visitar_BloqueBare,
 )
 from backend.interpreter.funciones import (
     visitar_LlamadaFuncion, visitar_Return, visitar_FuncionEmbebida,
@@ -170,6 +171,7 @@ class Interprete(RecorrerAST):
     visitar_Rango = visitar_Rango
     visitar_Break = visitar_Break
     visitar_Continue = visitar_Continue
+    visitar_BloqueBare = visitar_BloqueBare
     visitar_LlamadaFuncion = visitar_LlamadaFuncion
     visitar_Return = visitar_Return
     visitar_FuncionEmbebida = visitar_FuncionEmbebida

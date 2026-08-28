@@ -3,7 +3,8 @@ class _ReturnValue(Exception):
         self.valor = valor
 
 class _BreakSignal(Exception):
-    pass
+    def __init__(self, label=None):
+        self.label = label
 
 class _ContinueSignal(Exception):
     pass

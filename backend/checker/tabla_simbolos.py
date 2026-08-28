@@ -38,10 +38,7 @@ class TablaSimbolos:
         return self.ambitos[-1]
 
     def declarar_variable(self, simbolo):
-        ambito = self.ambito_actual()
-        if simbolo.nombre in ambito:
-            return False
-        ambito[simbolo.nombre] = simbolo
+        self.ambito_actual()[simbolo.nombre] = simbolo
         return True
 
     def buscar_variable(self, nombre):

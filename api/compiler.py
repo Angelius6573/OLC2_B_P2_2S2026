@@ -51,7 +51,7 @@ def compilar_codigo(codigo: str) -> dict:
             Interprete().ejecutar(result)
     except SystemExit:
         pass
-    except RuntimeError as e:
+    except Exception as e:
         todos_errores.append({"line": 0, "col": 0, "message": f"[Ejecucion] {str(e)}"})
 
     return {

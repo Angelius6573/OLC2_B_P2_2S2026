@@ -62,7 +62,7 @@ def visitar_FuncionEmbebida(self, nodo):
         for argumento in nodo.argumentos:
             self.visitar(argumento)
         return None
-    if nombre in ('to_uppercase', 'to_lowercase', 'reverse', 'replace'):
+    if nombre in ('to_uppercase', 'to_lowercase', 'replace'):
         tipo_objetivo = self.visitar(nodo.objetivo)
         if tipo_objetivo is not None and tipo_objetivo != 'String':
             se_esperaba(self, nodo, 'String', tipo_objetivo)
@@ -70,6 +70,14 @@ def visitar_FuncionEmbebida(self, nodo):
             self.visitar(argumento)
         nodo.tipo = 'String'
         return 'String'
+    if nombre == 'reverse':
+        tipo_objetivo = self.visitar(nodo.objetivo)
+        if tipo_objetivo is not None and tipo_objetivo != 'String' and not tipo_objetivo.startswith('['):
+            se_esperaba(self, nodo, 'String o arreglo', tipo_objetivo)
+        for argumento in nodo.argumentos:
+            self.visitar(argumento)
+        nodo.tipo = tipo_objetivo
+        return tipo_objetivo
     if nombre == 'contains':
         tipo_objetivo = self.visitar(nodo.objetivo)
         if tipo_objetivo is not None and tipo_objetivo != 'String':

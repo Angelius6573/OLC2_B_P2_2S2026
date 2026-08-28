@@ -20,7 +20,7 @@ def p_params_struct(t):
         t[0] = t[1]
 
 def p_param_struct(t):
-    'param_struct : ID COLON expresion'
+    'param_struct : ID COLON valor'
     t[0] = fijar_ubicacion(t, AsignarParametro(nombre=t[1], valor=t[3]))
 
 # instanciar_struct ya no vive dentro de operando/expresion (evita la ambiguedad `ID {`

@@ -1,7 +1,19 @@
 from backend.ast_modular.variables import DeclaracionVariable, Asignacion, AsignacionCompuesta
 
+def _default_por_tipo(tipo):
+    defaults = {
+        'i32': 0,
+        'f64': 0.0,
+        'bool': False,
+        'String': '',
+        'char': '\0',
+    }
+    return defaults.get(tipo, None)
+
 def visitar_DeclaracionVariable(self, nodo):
     valor = self.visitar(nodo.valor) if nodo.valor is not None else None
+    if valor is None and nodo.tipo is not None:
+        valor = _default_por_tipo(nodo.tipo)
     mutable = nodo.mutabilidad == 'let mut'
     self.ambito_actual.declarar(nodo.nombre, valor, mutable)
     return None
@@ -27,7 +39,10 @@ def visitar_AsignacionCompuesta(self, nodo):
     elif op == '*':
         v.valor = v.valor * valor
     elif op == '/':
-        v.valor = v.valor / valor
+        resultado = v.valor / valor
+        if isinstance(v.valor, int) and isinstance(valor, int) and resultado == int(resultado):
+            resultado = int(resultado)
+        v.valor = resultado
     elif op == '%':
         v.valor = v.valor % valor
     return None

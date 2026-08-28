@@ -1,5 +1,6 @@
 from backend.analizador_lexico import tokens
 from backend.ast_modular.funciones import DeclaracionFuncion, NombreFuncion, Return
+from backend.ast_modular.bucles import BloqueBare
 from backend.sintax.helpers import fijar_ubicacion
 
 def p_declaracion_funcion(t):
@@ -80,8 +81,13 @@ def p_instruccion(t):
                    | break_stmt
                    | continue_stmt
                    | match_expr
+                   | bloque_bare
     '''
     t[0] = t[1]
+
+def p_bloque_bare(t):
+    'bloque_bare : OPEN_BRACE instrucciones CLOSE_BRACE'
+    t[0] = fijar_ubicacion(t, BloqueBare(bloque=t[2]))
 
 def p_instruccion_error_panic(t):
     'instruccion : error'

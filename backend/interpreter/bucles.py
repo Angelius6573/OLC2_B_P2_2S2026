@@ -1,12 +1,18 @@
-from backend.ast_modular.bucles import (BucleWhile, BucleLoop, BucleFor, Break, Continue, Rango)
+from backend.ast_modular.bucles import (BucleWhile, BucleLoop, BucleFor, Break, Continue, Rango, BloqueBare)
 from backend.interpreter.runtime import _BreakSignal, _ContinueSignal
+
+def visitar_BloqueBare(self, nodo):
+    self._ejecutar_bloque(nodo.bloque)
+    return None
 
 def visitar_BucleWhile(self, nodo):
     while self.visitar(nodo.condicion):
         try:
             self._ejecutar_bloque(nodo.bloque_ambito)
-        except _BreakSignal:
-            break
+        except _BreakSignal as e:
+            if e.label is None or e.label == nodo.label:
+                break
+            raise
         except _ContinueSignal:
             continue
     return None
@@ -15,8 +21,10 @@ def visitar_BucleLoop(self, nodo):
     while True:
         try:
             self._ejecutar_bloque(nodo.bloque_ambito)
-        except _BreakSignal:
-            break
+        except _BreakSignal as e:
+            if e.label is None or e.label == nodo.label:
+                break
+            raise
         except _ContinueSignal:
             continue
     return None
@@ -36,8 +44,10 @@ def visitar_BucleFor(self, nodo):
         self.ambito_actual.declarar(nombre_var, valor)
         try:
             self._ejecutar_bloque(nodo.bloque_ambito)
-        except _BreakSignal:
-            break
+        except _BreakSignal as e:
+            if e.label is None or e.label == nodo.label:
+                break
+            raise
         except _ContinueSignal:
             continue
     return None
@@ -48,7 +58,7 @@ def visitar_Rango(self, nodo):
     return range(inicio, fin)
 
 def visitar_Break(self, nodo):
-    raise _BreakSignal()
+    raise _BreakSignal(nodo.label)
 
 def visitar_Continue(self, nodo):
     raise _ContinueSignal()

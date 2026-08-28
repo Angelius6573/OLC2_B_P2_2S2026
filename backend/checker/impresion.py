@@ -6,7 +6,7 @@ def visitar_Imprimir(self, nodo):
     if getattr(args, 'es_rawstring', False) and operaciones:
         self.error(args.linea, args.columna, "println!: raw string no admite argumentos")
     else:
-        placeholders = args.cadena.count('{}')
+        placeholders = args.cadena.count('{}') + args.cadena.count('{:?}')
         if placeholders != len(operaciones):
             self.error(args.linea, args.columna, f"println!: {placeholders} placeholders, {len(operaciones)} argumentos")
     for operacion in operaciones:

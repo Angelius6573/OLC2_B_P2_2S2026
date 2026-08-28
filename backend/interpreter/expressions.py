@@ -28,7 +28,10 @@ def visitar_OperacionBinaria(self, nodo):
     if op == '/':
         if der == 0:
             raise RuntimeError(f"{nodo.linea}:{nodo.columna} División por cero")
-        return izq / der
+        resultado = izq / der
+        if isinstance(izq, int) and isinstance(der, int) and resultado == int(resultado):
+            return int(resultado)
+        return resultado
     if op == '%':
         if der == 0:
             raise RuntimeError(f"{nodo.linea}:{nodo.columna} Módulo por cero")

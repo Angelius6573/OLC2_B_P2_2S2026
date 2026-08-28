@@ -132,6 +132,7 @@ tokens = (
     'RAWSTRING',
     'PRINTLN',
     'MATCH_BASE',
+    'LABEL',
     'ID',
 )
 
@@ -155,6 +156,17 @@ def t_RAWSTRING(t):
         t.value = t.value[3:-2]   ## r#"{contenido}"# → contenido
     else:
         t.value = t.value[2:-1]   ## r"{contenido}" -> contenido
+    return t
+
+def t_LABEL(t):
+    r"'[a-zA-Z_][a-zA-Z_0-9]*"
+    end = t.lexpos + len(t.value)
+    if end < len(t.lexer.lexdata) and t.lexer.lexdata[end] == "'":
+        t.value = t.value[1:]
+        t.type = 'CARACTER'
+        t.lexer.lexpos = end + 1
+        return t
+    t.value = t.value[1:]
     return t
 
 def t_CARACTER(t):
@@ -226,6 +238,7 @@ LEXEMA_TIPO = {
     'CARACTER': 'carácter',
     'CADENA': 'cadena',
     'RAWSTRING': 'cadena cruda',
+    'LABEL': 'etiqueta',
 }
 
 def lexema_tipo(tipo):
