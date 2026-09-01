@@ -23,11 +23,11 @@ from backend.ast import Programa
 from backend.ast_modular.aritmetica import Booleano, NumeroEntero, Variable
 
 precedence = (
-    ('left', 'OR'),
     ('left', 'AND'),
+    ('left', 'OR'),
     ('left', 'EQUAL', 'NO_EQUAL', 'GTE', 'LTE', 'GT', 'LT'),
-    ('left', 'ADD', 'MINUS'),
-    ('left', 'MULTI', 'DIV', 'MOD'),
+    ('left', 'MULTI', 'MINUS'),
+    ('left', 'ADD', 'DIV', 'MOD'),
     ('right', 'NOT', 'NEGACION_UNARIA') # NEGACION_UNARIA es un token invent solo para la precedencia, sigue siendo el "-"
 )
 

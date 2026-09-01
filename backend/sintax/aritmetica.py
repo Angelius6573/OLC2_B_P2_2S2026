@@ -8,7 +8,7 @@ from backend.sintax.helpers import fijar_ubicacion
 
 def p_operacion_aritmetica(t):
     '''operacion_aritmetica : operacion_aritmetica MINUS operadores_multiplicativos
-                            | operacion_aritmetica ADD operadores_multiplicativos
+                            | operacion_aritmetica MULTI operadores_multiplicativos
                             | operadores_multiplicativos
     '''
     if len(t) == 2:
@@ -19,7 +19,7 @@ def p_operacion_aritmetica(t):
 def p_operadores_multiplicativos(t):
     '''operadores_multiplicativos : operadores_multiplicativos DIV operacion_unaria
                                   | operadores_multiplicativos MOD operacion_unaria
-                                  | operadores_multiplicativos MULTI operacion_unaria
+                                  | operadores_multiplicativos ADD operacion_unaria
                                   | operacion_unaria
     '''
     if len(t) == 2:
