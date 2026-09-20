@@ -1,12 +1,12 @@
 ---
 import Layout from '../layouts/Layout.astro';
 ---
-<Layout title="OxigenScript IDE">
+<Layout title="OxigenNative IDE">
   <div id="app" style="display: flex; flex-direction: column; height: 100vh;">
     <header class="page-header">
       <h1>
-        <img src="/logoOX.svg" alt="OxigenScript" style="height: 32px;" />
-        OxigenScript IDE
+        <img src="/logoOX.svg" alt="OxigenNative" style="height: 32px;" />
+        OxigenNative IDE
       </h1>
       <div class="nav-links">
         <a href="/dashboard" class="active">Editor</a>
@@ -85,7 +85,7 @@ function getIsDark(): boolean {
 function initEditor() {
   const container = document.getElementById('editor-container');
   if (!container) return;
-  const saved = localStorage.getItem('oxigen_code') || 'fn main() {\n  println!("Hola OxigenScript!");\n}\n';
+  const saved = localStorage.getItem('oxigen_code') || 'fn main() {\n  println!("Hola OxigenNative!");\n}\n';
   const update = EditorView.updateListener.of(u => {
     if (u.docChanged) localStorage.setItem('oxigen_code', u.state.doc.toString());
   });

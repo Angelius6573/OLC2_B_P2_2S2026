@@ -20,7 +20,7 @@ cleanup() {
 
 trap cleanup SIGINT SIGTERM
 
-echo "Script de inicio para OxigenScript"
+echo "Script de inicio para OxigenNative"
 echo ""
 
 echo "[1/2] Iniciando backend (FastAPI en puerto 8000)..."

@@ -1,4 +1,5 @@
-# OxigenScript
+# OxigenNative
+Actualizar documentación en algun momento futuro
 ## Organización de Lenguajes y Compiladores II | Sección B
 [![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/) [![PLY](https://img.shields.io/badge/PLY-Python%20Lex--Yacc-ffd43b?style=flat)](https://www.dabeaz.com/ply/) [![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/) [![Graphviz](https://img.shields.io/badge/Graphviz-DOT-5A7E3E?style=flat&logo=graphviz&logoColor=white)](https://graphviz.org/) [![Astro](https://img.shields.io/badge/Astro-BC52EE?style=flat&logo=astro&logoColor=white)](https://astro.build/) [![FIUSAC](https://img.shields.io/badge/FIUSAC-Facultad%20de%20Ingenieria-blue?style=flat)](https://portal.ingenieria.usac.edu.gt/) [![Licencia MIT](https://img.shields.io/badge/Licencia-MIT-blue?style=flat)](LICENSE)
 

@@ -12,7 +12,7 @@ from pydantic import BaseModel
 from api.compiler import compilar_codigo
 from api.tokens import obtener_tokens
 
-app = FastAPI(title="OxigenScript API")
+app = FastAPI(title="OxigenNative API")
 
 app.add_middleware(
     CORSMiddleware,
