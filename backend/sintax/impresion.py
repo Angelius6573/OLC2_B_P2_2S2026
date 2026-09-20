@@ -13,10 +13,14 @@ def p_argumentos_impresion(t):
                             | CADENA COMMA operaciones_directas
                             | RAWSTRING
                             | RAWSTRING COMMA operaciones_directas
+                            | operaciones_directas
     '''
     es_raw_string = t.slice[1].type == 'RAWSTRING'
     if len(t) == 2:
-        t[0] = fijar_ubicacion(t, ArgumentosImpresion(cadena=t[1], operaciones_directas=[], es_rawstring=es_raw_string))
+        if t.slice[1].type == 'operaciones_directas':
+            t[0] = fijar_ubicacion(t, ArgumentosImpresion(cadena='', operaciones_directas=t[1], es_rawstring=es_raw_string))
+        else:
+            t[0] = fijar_ubicacion(t, ArgumentosImpresion(cadena=t[1], operaciones_directas=[], es_rawstring=es_raw_string))
     if len(t) == 4:
         t[0] = fijar_ubicacion(t, ArgumentosImpresion(cadena=t[1], operaciones_directas=t[3], es_rawstring=es_raw_string))
 

@@ -33,9 +33,6 @@ def compilar(codigo_sencillo):
     for linea, col, msg in errores_lex_syn + errores_sem:
         print(f"{linea}:{col} {msg}")
 
-    if errores_sem:
-        sys.exit(1)
-
     print("Compilación exitosa")
     visitar_nodos_graph = VisitarGrafo()
     visitar_nodos_graph.visitar(result)

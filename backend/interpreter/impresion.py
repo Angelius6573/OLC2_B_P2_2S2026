@@ -4,7 +4,7 @@ def _formato_valor(val):
     if isinstance(val, bool):
         return 'true' if val else 'false'
     if val is None:
-        return 'null'
+        return 'None'
     return str(val)
 
 def _formato_debug(val):
@@ -14,15 +14,23 @@ def _formato_debug(val):
     if isinstance(val, bool):
         return 'true' if val else 'false'
     if val is None:
-        return 'null'
+        return 'None'
     if isinstance(val, str):
         return f'"{val}"'
     return repr(val)
+
+def _formato_directo(val):
+    if isinstance(val, list):
+        return _formato_debug(val)
+    return _formato_valor(val)
 
 def visitar_Imprimir(self, nodo):
     args = nodo.argumentos_impresion
     cadena = args.cadena
     operaciones = args.operaciones_directas
+    if cadena == '' and operaciones:
+        print(' '.join(_formato_directo(self.visitar(op)) for op in operaciones))
+        return None
     if operaciones:
         valores = [self.visitar(op) for op in operaciones]
         resultado = cadena

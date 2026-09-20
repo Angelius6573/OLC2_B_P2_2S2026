@@ -14,9 +14,10 @@ def visitar_OperacionBinaria(self, nodo):
     if operador in ('+', '-', '*', '/', '%'):
         tipo = binaria(operador, izquierda, derecha)
         if tipo is None:
-            se_esperaba(self, nodo, 'operandos compatibles',
-                        f'{izquierda} {operador} {derecha}')
-            tipo = 'i32'
+            self.error(nodo.linea, nodo.columna,
+                       f"No es posible aplicar el operador '{operador}' entre los tipos {izquierda} y {derecha}.")
+            nodo.tipo = None
+            return None
     elif operador in ('==', '!=', '<', '<=', '>', '>='):
         if izquierda == derecha or (izquierda in NUMERICOS and derecha in NUMERICOS):
             tipo = 'bool'

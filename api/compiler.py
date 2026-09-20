@@ -33,14 +33,6 @@ def compilar_codigo(codigo: str) -> dict:
     errores_sem = list(analizador.errores)
     todos_errores = [{"line": l, "col": c, "message": m} for l, c, m in errores_lex_sin + errores_sem]
 
-    if errores_sem:
-        return {
-            "output": "",
-            "errors": todos_errores,
-            "symbols": [],
-            "ast_image": None,
-        }
-
     grafo = VisitarGrafo()
     grafo.visitar(result)
     ast_file = grafo.renderizar()
