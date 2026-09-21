@@ -1,0 +1,27 @@
+.equ READ, 63
+.equ WRITE, 64
+.equ EXIT, 93
+.equ STDIN, 0
+.equ STDOUT, 1
+.equ STDERR, 2
+.equ NW_LN, 0x0A
+.equ ESPACIO_BLANCO, 0x20
+.equ COMILLA_DOBLE, 0x22
+.equ COMA, 0x2C
+.equ MINUS, 0x2D
+.equ PUNTO, 0x2E
+.equ ZERO, 0x30
+
+.equ TAMANIO_SLOT, 16
+.equ TAMANIO_CELDA, 16
+.equ HEAP_TAMANIO, 8388608
+.equ TAM_BUF_NUMERO, 32
+.equ DECIMALES_F64, 6
+.equ UN_MILLON, 1000000
+
+/* Códigos de error, se van a x6*/
+.equ ERR_INDICE_FUERA, 1
+.equ ERR_DIVISION_CERO, 2
+.equ ERR_MODULO_CERO, 3
+.equ ERR_SIN_MEMORIA, 4
+.equ ERR_ULTIMO, 4
