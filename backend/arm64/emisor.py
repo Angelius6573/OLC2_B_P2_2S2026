@@ -1,11 +1,9 @@
-import re
-
 SANGRIA = '  '
-_MARCADOR_DE_LINEA = re.compile(r'^\d+\s+"')        # '# 2 "x"' al inicio de línea es un marcador de línea
-                                                    # para as y altera sus mensajes de error
+
 class Emisor:
     """
-    `#` solo en línea completa y `/* */` después de una instrucción. Nunca `//`.
+    Todo comentario usa `//`: en línea completa, después de una instrucción y en bloques de
+    varias líneas (una `//` por línea).
     """
     def __init__(self):
         self.lineas = []
@@ -29,14 +27,13 @@ class Emisor:
         if operandos:
             linea += ' ' + ', '.join(str(o) for o in operandos)
         if comentario:
-            linea += f'  /* {_limpiar_bloque(comentario)} */'
+            # `//` comenta hasta el fin de línea: un salto en el texto rompería la instrucción
+            linea += f'  // {str(comentario).replace(chr(10), " ")}'
         self.lineas.append(linea)
 
     def comentario(self, texto):
         for parte in str(texto).splitlines() or ['']:
-            if _MARCADOR_DE_LINEA.match(parte):
-                parte = f'· {parte}'
-            self.lineas.append(f'# {parte}'.rstrip())
+            self.lineas.append(f'// {parte}'.rstrip())
 
     def blanco(self):
         self.lineas.append('')
@@ -53,6 +50,3 @@ class Emisor:
 
     def texto(self):
         return '\n'.join(self.lineas) + '\n'
-
-def _limpiar_bloque(texto):
-    return str(texto).replace('*/', '* /').replace('\n', ' ')
