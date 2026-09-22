@@ -1,6 +1,6 @@
-# Entran:
-# x0 como puntero
-# x1 longitud del texto
+// Entran:
+// x0 como puntero
+// x1 longitud del texto
 .global ox_print
 .include "var_globs.s"
 

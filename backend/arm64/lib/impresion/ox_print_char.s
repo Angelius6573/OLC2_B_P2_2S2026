@@ -1,4 +1,4 @@
-# ox_print_char(x0 = punto de código Unicode): lo codifica en UTF-8 y lo escribe.
+// ox_print_char(x0 = punto de código Unicode): lo codifica en UTF-8 y lo escribe.
 .global ox_print_char
 .include "var_globs.s"
 
@@ -6,7 +6,7 @@
 ox_print_char:
   stp x29, x30, [sp, #-32]!
   mov x29, sp
-  add x9, x29, #16          # buffer de 4 bytes
+  add x9, x29, #16          // buffer de 4 bytes
 
   cmp x0, #0x80
     b.lo caracter_1_byte
@@ -16,7 +16,7 @@ ox_print_char:
   cmp x0, x10
     b.lo caracter_3_bytes
 
-# 4 bytes: 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
+// 4 bytes: 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx
   lsr x10, x0, #18
   orr x10, x10, #0xF0
   strb w10, [x9]
@@ -32,7 +32,7 @@ ox_print_char:
   mov x1, #4
     b caracter_escribir
 
-# 3 bytes: 1110xxxx 10xxxxxx 10xxxxxx
+// 3 bytes: 1110xxxx 10xxxxxx 10xxxxxx
 caracter_3_bytes:
   lsr x10, x0, #12
   orr x10, x10, #0xE0
@@ -46,7 +46,7 @@ caracter_3_bytes:
   mov x1, #3
     b caracter_escribir
 
-# 2 bytes: 110xxxxx 10xxxxxx
+// 2 bytes: 110xxxxx 10xxxxxx
 caracter_2_bytes:
   lsr x10, x0, #6
   orr x10, x10, #0xC0

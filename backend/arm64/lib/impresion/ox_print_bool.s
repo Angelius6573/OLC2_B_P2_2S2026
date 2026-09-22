@@ -1,4 +1,4 @@
-# Recibe x0, 0 para false y 1 para true
+// Recibe x0, 0 para false y 1 para true
 .global ox_print_bool
 .include "var_globs.s"
 

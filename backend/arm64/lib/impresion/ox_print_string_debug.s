@@ -1,5 +1,5 @@
-# ox_print_string_debug(x0 = puntero, x1 = longitud): escribe la cadena entre comillas
-# dobles ({:?}).
+// ox_print_string_debug(x0 = puntero, x1 = longitud): escribe la cadena entre comillas
+// dobles ({:?}).
 
 .include "var_globs.s"
 

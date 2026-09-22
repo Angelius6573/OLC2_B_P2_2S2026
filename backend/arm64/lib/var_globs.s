@@ -19,7 +19,7 @@
 .equ DECIMALES_F64, 6
 .equ UN_MILLON, 1000000
 
-/* Códigos de error, se van a x6*/
+// Códigos de error, se van a x6
 .equ ERR_INDICE_FUERA, 1
 .equ ERR_DIVISION_CERO, 2
 .equ ERR_MODULO_CERO, 3

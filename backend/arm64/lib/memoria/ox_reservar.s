@@ -1,7 +1,7 @@
-# ox_reservar(x0 = bytes) -> x0 = bloque alineado a 16 bytes, lleno de ceros.
-# Bump allocator sin liberación. ptr_heap vale 0 hasta la primera
-# reserva, que lo apunta al inicio de heap. Si el heap se agota, el error es crítico:
-# se reporta y el programa termina con código 1.
+// ox_reservar(x0 = bytes) -> x0 = bloque alineado a 16 bytes, lleno de ceros.
+// Bump allocator sin liberación. ptr_heap vale 0 hasta la primera
+// reserva, que lo apunta al inicio de heap. Si el heap se agota, el error es crítico:
+// se reporta y el programa termina con código 1.
 .global ox_reservar
 .include "var_globs.s"
 
@@ -21,8 +21,8 @@ ox_reservar:
 
 reservar_listo:
   add x0, x0, #15
-  and x0, x0, #-16                # redondear al múltiplo de 16
-  add x11, x10, x0                # x11 = nuevo tope
+  and x0, x0, #-16                // redondear al múltiplo de 16
+  add x11, x10, x0                // x11 = nuevo tope
   ldr x12, =heap_fin
   cmp x11, x12
     b.hi reservar_sin_memoria

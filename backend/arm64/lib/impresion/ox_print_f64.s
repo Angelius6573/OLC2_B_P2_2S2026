@@ -1,7 +1,7 @@
-# ox_print_f64(x0 = bits IEEE-754 del f64):
-#   0.0 y -0.0 -> "0.0". Sin decimales -> solo la parte entera ("2").
-#   Con decimales -> hasta seis, redondeados, sin ceros a la derecha ("3.14").
-# La parte entera se satura en el máximo de i64, pero eso no importa
+// ox_print_f64(x0 = bits IEEE-754 del f64):
+//   0.0 y -0.0 -> "0.0". Sin decimales -> solo la parte entera ("2").
+//   Con decimales -> hasta seis, redondeados, sin ceros a la derecha ("3.14").
+// La parte entera se satura en el máximo de i64, pero eso no importa
 .global ox_print_f64
 .include "var_globs.s"
 
@@ -17,7 +17,7 @@ ox_print_f64:
   fmov d0, x0
   fcmp d0, #0.0
     b.eq flotante_cero
-  add x13, x29, #16         # x13 = puntero de escritura en el buffer de 48 bytes
+  add x13, x29, #16         // x13 = puntero de escritura en el buffer de 48 bytes
     b.gt flotante_positivo
   mov w9, MINUS
   strb w9, [x13], #1
@@ -25,21 +25,21 @@ ox_print_f64:
 
 flotante_positivo:
   frintz d1, d0
-  fcvtzs x14, d1            # x14 = parte entera
-  fsub d2, d0, d1           # d2 = fracción en [0, 1)
-  ldr x9, =UN_MILLON        # 0xF4240 no cabe en un solo mov
+  fcvtzs x14, d1            // x14 = parte entera
+  fsub d2, d0, d1           // d2 = fracción en [0, 1)
+  ldr x9, =UN_MILLON        // 0xF4240 no cabe en un solo mov
   ucvtf d3, x9
   fmul d2, d2, d3
-  frinta d2, d2             # redondeo al más cercano; evita 2.675 -> 2.674999
-  fcvtzs x15, d2            # x15 = fracción por 10^6
+  frinta d2, d2             // redondeo al más cercano; evita 2.675 -> 2.674999
+  fcvtzs x15, d2            // x15 = fracción por 10^6
   cmp x15, x9
     b.lo flotante_sin_acarreo
-  # 0.9999996 redondea a 1000000: la unidad pasa a la parte entera
+  // 0.9999996 redondea a 1000000: la unidad pasa a la parte entera
   add x14, x14, #1
   mov x15, #0
 
 flotante_sin_acarreo:
-  # Un valor que redondea a cero en ambas partes, como -0.0000001, se escribe 0.0
+  // Un valor que redondea a cero en ambas partes, como -0.0000001, se escribe 0.0
   orr x9, x14, x15
   cbz x9, flotante_cero
 
@@ -52,7 +52,7 @@ flotante_sin_acarreo:
   mov w9, PUNTO
   strb w9, [x13], #1
 
-# Seis dígitos con ceros a la izquierda, escritos del último al primero.
+// Seis dígitos con ceros a la izquierda, escritos del último al primero.
   add x13, x13, DECIMALES_F64
   mov x10, x13
   mov x11, #10
@@ -67,7 +67,7 @@ flotante_digito:
   subs x3, x3, #1
     b.ne flotante_digito
 
-# Quitar ceros a la derecha. La fracción no es cero, así que el bucle se detiene antes del punto.
+// Quitar ceros a la derecha. La fracción no es cero, así que el bucle se detiene antes del punto.
 flotante_quitar_ceros:
   ldrb w9, [x13, #-1]
   cmp w9, ZERO
