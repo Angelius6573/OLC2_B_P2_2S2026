@@ -21,7 +21,7 @@ from backend.checker.bucles import (
     visitar_BucleWhile, visitar_BucleLoop, visitar_BucleFor,
     visitar_Break, visitar_Continue, visitar_Rango,
 )
-from backend.checker.condicionales import visitar_Condicional
+from backend.checker.condicionales import visitar_Condicional, visitar_BloqueBare
 from backend.checker.funciones import (
     visitar_LlamadaFuncion, visitar_Return, visitar_FuncionEmbebida,
 )
@@ -95,6 +95,7 @@ class AnalizadorSemantico(RecorrerAST):
     visitar_Continue = visitar_Continue
     visitar_Rango = visitar_Rango
     visitar_Condicional = visitar_Condicional
+    visitar_BloqueBare = visitar_BloqueBare
     visitar_LlamadaFuncion = visitar_LlamadaFuncion
     visitar_Return = visitar_Return
     visitar_FuncionEmbebida = visitar_FuncionEmbebida
