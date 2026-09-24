@@ -8,9 +8,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from backend.analizador_sintactico import parser
 from backend.errores import errores, limpiar
 from backend.analizador_semantico import AnalizadorSemantico
+from backend.checker.tabla_simbolos import SIN_VALOR
 from backend.interpreter.interprete import Interprete
 from backend.visitor.grafo import VisitarGrafo
-
 
 def compilar_codigo(codigo: str) -> dict:
     limpiar()
@@ -31,6 +31,11 @@ def compilar_codigo(codigo: str) -> dict:
     analizador.analizar(result)
 
     errores_sem = list(analizador.errores)
+    # «Valor» de las variables queda en «—» hasta que el intérprete lo registre (PLAN F4)
+    simbolos = [
+        {**fila, "valor": fila["valor"] if fila["valor"] is not None else SIN_VALOR}
+        for fila in analizador.tabla.reporte()
+    ]
     todos_errores = [{"line": l, "col": c, "message": m} for l, c, m in errores_lex_sin + errores_sem]
 
     grafo = VisitarGrafo()
@@ -49,6 +54,6 @@ def compilar_codigo(codigo: str) -> dict:
     return {
         "output": stdout_capture.getvalue(),
         "errors": todos_errores,
-        "symbols": [],
+        "symbols": simbolos,
         "ast_image": ast_file,
     }
