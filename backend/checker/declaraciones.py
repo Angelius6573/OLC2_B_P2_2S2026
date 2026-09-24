@@ -1,6 +1,6 @@
 from backend.ast_modular.struct import DeclaracionStruct
 from backend.ast_modular.funciones import DeclaracionFuncion
-from backend.checker.tabla_simbolos import SimboloFuncion, SimboloStruct
+from backend.checker.tabla_simbolos import SimboloFuncion, SimboloStruct, AMBITO_GLOBAL
 
 def colectar_declaraciones(self, programa):
     for declaracion in programa.declaraciones:
@@ -58,6 +58,8 @@ def visitar_DeclaracionFuncion(self, nodo):
     if simbolo is None:
         return None
     self.tabla.abrir_ambito()
+    self.tabla.ambito_nombre = nombre
+    # La gramática no guarda la posición de cada parámetro: llevan la de la función
     for nombre_param, tipo_param in simbolo.parametros:
         if not self.tabla.declarar_variable(SimboloVariable(
             nombre=nombre_param,
@@ -65,11 +67,13 @@ def visitar_DeclaracionFuncion(self, nodo):
             mutable=False,
             linea=simbolo.linea,
             columna=simbolo.columna,
+            categoria='Parámetro',
         )):
             self.error(nodo.linea, nodo.columna, f"La variable '{nombre_param}' ya está definida")
     self._funcion_actual = simbolo
     for instruccion in nodo.bloque_ambito:
         self.visitar(instruccion)
     self._funcion_actual = None
+    self.tabla.ambito_nombre = AMBITO_GLOBAL
     self.tabla.cerrar_ambito()
     return None
