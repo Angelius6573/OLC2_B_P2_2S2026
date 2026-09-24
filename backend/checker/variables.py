@@ -21,6 +21,7 @@ def visitar_DeclaracionVariable(self, nodo):
     )
     if not self.tabla.declarar_variable(simbolo):
         self.error(nodo.linea, nodo.columna, f"La variable '{nodo.nombre}' ya está definida")
+    nodo.sym_id = simbolo.sym_id
     return None
 
 def visitar_Asignacion(self, nodo):
@@ -28,6 +29,7 @@ def visitar_Asignacion(self, nodo):
     if simbolo is None:
         self.error(nodo.linea, nodo.columna, f"Variable '{nodo.nombre}' utilizada no fue declarada")
         return None
+    nodo.sym_id = simbolo.sym_id
     if not simbolo.mutable:
         self.error(nodo.linea, nodo.columna, f"No se puede modificar el valor de la variable '{nodo.nombre}' porque no fue declarada como mutable")
     tipo_valor = self.visitar(nodo.valor)
@@ -40,6 +42,7 @@ def visitar_AsignacionCompuesta(self, nodo):
     if simbolo is None:
         self.error(nodo.linea, nodo.columna, f"Variable '{nodo.nombre}' utilizada no fue declarada")
         return None
+    nodo.sym_id = simbolo.sym_id
     if not simbolo.mutable:
         self.error(nodo.linea, nodo.columna, f"No se puede modificar el valor de la variable '{nodo.nombre}' porque no fue declarada como mutable")
     tipo_valor = self.visitar(nodo.valor)

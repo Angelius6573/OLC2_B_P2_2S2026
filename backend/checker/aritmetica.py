@@ -62,6 +62,7 @@ def visitar_Variable(self, nodo):
                    f"Variable '{nodo.id}' utilizada no fue declarada")
         return None
     nodo.tipo = simbolo.tipo
+    nodo.sym_id = simbolo.sym_id
     return simbolo.tipo
 
 def visitar_NumeroEntero(self, nodo):
