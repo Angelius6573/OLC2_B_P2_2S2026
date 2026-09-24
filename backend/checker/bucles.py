@@ -36,13 +36,15 @@ def visitar_BucleFor(self, nodo):
             if tipo_iter is not None:
                 se_esperaba(self, nodo, 'rango o arreglo', tipo_iter)
     self.tabla.abrir_ambito()
-    self.tabla.declarar_variable(SimboloVariable(
+    simbolo = SimboloVariable(
         nombre=nodo.variable.id,
         tipo=tipo_variable,
         mutable=False,
         linea=nodo.variable.linea,
         columna=nodo.variable.columna,
-    ))
+    )
+    self.tabla.declarar_variable(simbolo)
+    nodo.variable.sym_id = simbolo.sym_id
     self._en_bucle += 1
     for instruccion in nodo.bloque_ambito:
         self.visitar(instruccion)
