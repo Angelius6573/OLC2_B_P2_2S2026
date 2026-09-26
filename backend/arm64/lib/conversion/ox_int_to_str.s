@@ -1,6 +1,6 @@
 // Entran:
-// x0 inicio del texto
-// x1 longitud del texto
+// x0 es el numero
+// x1 buffer
 .global ox_int_to_str
 .include "var_globs.s"
 

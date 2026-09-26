@@ -1,6 +1,7 @@
 .equ READ, 63
 .equ WRITE, 64
 .equ EXIT, 93
+.equ GETRANDOM, 278
 .equ STDIN, 0
 .equ STDOUT, 1
 .equ STDERR, 2
