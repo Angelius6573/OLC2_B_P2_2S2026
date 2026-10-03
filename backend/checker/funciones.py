@@ -1,6 +1,14 @@
 from backend.ast_modular.funciones import LlamadaFuncion, Return
 from backend.ast_modular.funciones_embebidas import FuncionEmbebida
+from backend.ast_modular.aritmetica import Variable
+from backend.ast_modular.arrays import AccederIndice
 from backend.checker.helpers import se_esperaba
+
+def _variable_receptora(objetivo):
+    # s.push_str(...) modifica s; m[i].push_str(...) modifica m
+    while isinstance(objetivo, AccederIndice):
+        objetivo = objetivo.objetivo
+    return objetivo if isinstance(objetivo, Variable) else None
 
 def visitar_LlamadaFuncion(self, nodo):
     nombre = nodo.nombre_funcion
@@ -59,8 +67,15 @@ def visitar_FuncionEmbebida(self, nodo):
         tipo_objetivo = self.visitar(nodo.objetivo)
         if tipo_objetivo is not None and tipo_objetivo != 'String':
             se_esperaba(self, nodo, 'String', tipo_objetivo)
+        # Un String solo crece si su variable se declaró con mut (enunciado §3.3.11)
+        receptora = _variable_receptora(nodo.objetivo)
+        simbolo = self.tabla.buscar_variable(receptora.id) if receptora is not None else None
+        if simbolo is not None and not simbolo.mutable:
+            self.error(nodo.linea, nodo.columna, f"No se puede modificar el valor de la variable '{receptora.id}' porque no fue declarada como mutable")
         for argumento in nodo.argumentos:
-            self.visitar(argumento)
+            tipo_argumento = self.visitar(argumento)
+            if tipo_argumento is not None and tipo_argumento != 'String':
+                se_esperaba(self, argumento, 'String', tipo_argumento)
         return None
     if nombre in ('to_uppercase', 'to_lowercase', 'replace'):
         tipo_objetivo = self.visitar(nodo.objetivo)

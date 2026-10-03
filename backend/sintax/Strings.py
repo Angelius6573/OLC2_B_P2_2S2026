@@ -22,8 +22,10 @@ def p_new_posterior(t):
     'new_posterior : NEWSTRING OPEN_PAR CLOSE_PAR'
     t[0] = fijar_ubicacion(t, DeclaracionString(metodo='new', valor=None))
 
+# El argumento es cualquier expresión: literal, variable o resultado de otra operación sobre String.
+# El checker valida que sea String
 def p_asignar_valor_string(t):
-    'asignar_valor_string : operando DOT PUSH_STR OPEN_PAR tipo_cadena CLOSE_PAR'
+    'asignar_valor_string : operando DOT PUSH_STR OPEN_PAR expresion CLOSE_PAR'
     t[0] = fijar_ubicacion(t, FuncionEmbebida(
         nombre='push_str',
         objetivo=t[1],
