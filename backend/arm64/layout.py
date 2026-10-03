@@ -7,6 +7,7 @@ TAMANIO_GUARDADO = 16           # x29 y x30 al fondo del marco
 LIMITE_STP_PREINDICE = 504      # stp x29, x30, [sp, #-N]! admite N <= 504
 LIMITE_SUB_INMEDIATO = 4095     # sub sp, sp, #N sin desplazamiento
 LIMITE_OFFSET_LDR = 32760       # ldr xN, [x29, #off]: 4095 * 8
+LIMITE_OFFSET_LDP = 504         # ldp/stp xN, xM, [x29, #off]: de -512 a 504
 
 def redondear_16(n):
     return (n + 15) & ~15
