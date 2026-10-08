@@ -29,11 +29,11 @@ from backend.arm64.generacion.arreglos import (
 )
 from backend.arm64.generacion.strings import visitar_DeclaracionString, visitar_FuncionEmbebida
 
-_STRUCTS = 'los structs son opcionales (PLAN F7) y se ejecutan en modo intérprete'
+_STRUCTS = 'los structs no tienen soporte en ARM64 y se ejecutan en modo intérprete'
 NO_SOPORTADOS = {
     'InstanciarStruct': _STRUCTS,
     'AccederCampo': _STRUCTS,
-    'Slice': 'los slices son opcionales (PLAN F8) y se ejecutan en modo intérprete',
+    'Slice': 'los slices no tienen soporte en ARM64 y se ejecutan en modo intérprete',
 }
 
 class GeneradorARM64(RecorrerAST):
