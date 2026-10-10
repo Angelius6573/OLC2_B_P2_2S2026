@@ -1,0 +1,26 @@
+---
+// Reportes en pestañas (enunciado §3.1.2 y §3.5): Errores, Tabla de símbolos, AST y Tokens
+const pestanas = [
+  { id: 'errores', titulo: 'Errores' },
+  { id: 'simbolos', titulo: 'Símbolos' },
+  { id: 'ast', titulo: 'AST' },
+  { id: 'tokens', titulo: 'Tokens' },
+];
+---
+<section class="panel ide-panel" id="panel-reportes">
+  <div class="ide-panel-titulo">
+    <span>Reportes</span>
+    <div class="pestanas">
+      {pestanas.map((p, i) => (
+        <button class:list={['pestana', { activa: i === 0 }]} data-pestana={p.id}>{p.titulo}</button>
+      ))}
+    </div>
+  </div>
+  <div class="ide-panel-cuerpo">
+    {pestanas.map((p, i) => (
+      <div class:list={['reporte', { activo: i === 0 }]} id={`reporte-${p.id}`}>
+        <p class="ide-vacio">Ejecuta un programa para ver este reporte.</p>
+      </div>
+    ))}
+  </div>
+</section>

@@ -1,0 +1,42 @@
+---
+// Barra superior (enunciado §3.1.2): Nuevo, Abrir, Guardar, Ejecutar y Reportes
+---
+<header class="page-header">
+  <h1>
+    <img src="/logoOX.svg" alt="OxigenNative" style="height: 32px;" />
+    OxigenNative IDE
+    <span id="nombre-archivo" style="font-size: 13px; font-weight: 400; opacity: 0.7;"></span>
+  </h1>
+  <div class="nav-links">
+    <button class="btn-primary" id="btn-nuevo">Nuevo</button>
+    <button class="btn-primary" id="btn-abrir">Abrir</button>
+    <button class="btn-primary" id="btn-guardar">Guardar</button>
+    <div style="width: 1px; height: 24px; background: var(--dark-border); margin: 0 4px;"></div>
+    <select id="selector-modo" class="btn-secondary" title="Modo de ejecución">
+      <option value="arm64">ARM64 (QEMU)</option>
+      <option value="interprete">Intérprete</option>
+    </select>
+    <button class="btn-primary" id="btn-ejecutar" style="background: #22c55e;">Ejecutar</button>
+    <div class="menu">
+      <button class="btn-primary" id="btn-reportes">Reportes</button>
+      <div class="menu-opciones" id="menu-reportes">
+        <button data-reporte="errores">Tabla de errores</button>
+        <button data-reporte="simbolos">Tabla de símbolos</button>
+        <button data-reporte="ast">Árbol de sintaxis (AST)</button>
+        <button data-reporte="tokens">Tokens</button>
+        <button data-reporte="simbolos-html">Reporte HTML de símbolos</button>
+      </div>
+    </div>
+    <button id="theme-toggle" class="theme-btn">Claro</button>
+  </div>
+  <input type="file" id="entrada-archivo" accept=".ox,.txt" style="display: none;" />
+</header>
+
+<style>
+  .theme-btn {
+    background: var(--purple-500); color: white; border: none; border-radius: 0;
+    padding: 6px 14px; cursor: pointer; font-size: 13px; font-weight: 600;
+  }
+  select.btn-secondary { appearance: auto; }
+  html.dark select.btn-secondary option { background: var(--dark-surface); color: var(--dark-text); }
+</style>
