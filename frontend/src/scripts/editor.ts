@@ -21,6 +21,7 @@ const temaClaro = EditorView.theme({
 export interface Editor {
   texto(): string;
   fijar(texto: string): void;
+  irA(linea: number, columna: number): void;
 }
 
 function crear(contenedor: HTMLElement, documento: string, extensiones: Extension[]): Editor {
@@ -36,6 +37,15 @@ function crear(contenedor: HTMLElement, documento: string, extensiones: Extensio
   return {
     texto: () => vista.state.doc.toString(),
     fijar: texto => vista.dispatch({ changes: { from: 0, to: vista.state.doc.length, insert: texto } }),
+    // Línea y columna desde 1, como las reporta el compilador
+    irA: (linea, columna) => {
+      const documento = vista.state.doc;
+      if (linea < 1 || linea > documento.lines) return;
+      const destino = documento.line(linea);
+      const posicion = Math.min(destino.from + Math.max(columna - 1, 0), destino.to);
+      vista.dispatch({ selection: { anchor: posicion }, scrollIntoView: true });
+      vista.focus();
+    },
   };
 }
 

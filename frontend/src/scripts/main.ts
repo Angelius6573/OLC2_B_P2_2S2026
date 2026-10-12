@@ -64,7 +64,7 @@ async function ejecutar() {
     ultima = respuesta;
     mostrarConsola(respuesta);
     mostrarArm64(respuesta);
-    mostrarErrores(respuesta.errors);
+    mostrarErrores(respuesta.errors, editor.irA);
     mostrarSimbolos(respuesta.symbols, respuesta.symbols_report);
     mostrarAst(respuesta.ast_image);
     mostrarTokens(tokens);

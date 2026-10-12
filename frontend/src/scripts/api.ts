@@ -1,7 +1,17 @@
 // Contrato de POST /api/compile y /api/tokens (api/compiler.py)
 export type Modo = 'arm64' | 'interprete';
 
-export interface ErrorCompilacion { line: number; col: number; message: string; }
+// Fila de la tabla de errores (backend/reportes/errores.py). `texto` tiene el formato del enunciado §3.5.1
+export interface ErrorCompilacion {
+  no: number;
+  categoria: 'Lexico' | 'Sintactico' | 'Semantico' | 'Ejecucion' | 'Generacion';
+  tipo: string;
+  linea: number;
+  columna: number;
+  descripcion: string;
+  fragmento: string | null;
+  texto: string;
+}
 
 export interface Simbolo {
   no: number; identificador: string; categoria: string; tipo: string;

@@ -24,20 +24,16 @@ export function limpiarConsola() {
   elemento('consola').innerHTML = '<p class="ide-vacio">Presiona «Ejecutar» para ver la salida.</p>';
 }
 
-// Estado, tiempos, salida del programa y errores de ejecución (lo que el programa escribe en stderr)
+// Estado, tiempos, salida del programa y, debajo, cada error con el formato del enunciado §3.5.1
 export function mostrarConsola(respuesta: RespuestaCompilacion) {
   const { status, output, errors } = respuesta;
-  const deEjecucion = errors.filter(e => e.message.startsWith('[Ejecucion]'));
   let html = `<p class="consola-estado ${status.ok ? 'ok' : 'error'}">${escapar(status.message)}</p>`;
   html += tiempos(respuesta);
   html += output
     ? `<pre class="consola-salida">${escapar(output)}</pre>`
     : '<p class="ide-vacio" style="text-align: left; padding: 0;">Sin salida.</p>';
-  if (deEjecucion.length) {
-    const lineas = deEjecucion.map(e => e.line
-      ? `${e.message.replace('[Ejecucion] ', `[Ejecucion] Línea ${e.line}, Columna ${e.col}: `)}`
-      : e.message);
-    html += `<pre class="consola-errores">${escapar(lineas.join('\n'))}</pre>`;
+  if (errors.length) {
+    html += `<pre class="consola-errores">${escapar(errors.map(e => e.texto).join('\n\n'))}</pre>`;
   }
   elemento('consola').innerHTML = html;
 }
