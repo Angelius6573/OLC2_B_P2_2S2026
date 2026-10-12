@@ -5,23 +5,36 @@ from backend.checker.tipos import LITERALES, NUMERICOS, TIPOS_PRIMITIVOS
 def es_literal(nodo):
     return isinstance(nodo, LITERALES)
 
+# Textos de los errores semánticos con la redacción del enunciado §3.5.1
 def se_esperaba(analizador, nodo, esperado, obtenido):
-    analizador.error(nodo.linea, nodo.columna, f"Se esperaba '{esperado}', pero se obtuvo '{obtenido}'")
+    analizador.error(nodo.linea, nodo.columna, f"Tipos incompatibles. No es posible utilizar un valor de tipo "
+                                               f"{obtenido} donde se esperaba un valor de tipo {esperado}.")
+
+def operador_invalido(analizador, nodo, operador, izquierda, derecha):
+    analizador.error(nodo.linea, nodo.columna,
+                     f"No es posible aplicar el operador '{operador}' entre los tipos {izquierda} y {derecha}.")
+
+def no_declarada(analizador, nodo, nombre):
+    analizador.error(nodo.linea, nodo.columna, f"La variable '{nombre}' no ha sido declarada.")
+
+def inmutable(analizador, nodo, nombre):
+    analizador.error(nodo.linea, nodo.columna,
+                     f"No es posible modificar la variable '{nombre}' porque fue declarada como inmutable.")
 
 def verificar_asignacion(analizador, nodo, tipo, tipo_valor):
     if tipo == tipo_valor:
         return
-    if es_literal(nodo.valor):
-        analizador.error(nodo.linea, nodo.columna, f"No se puede asignar un literal de tipo '{tipo_valor}' a una variable de tipo '{tipo}'")
-    else:
-        se_esperaba(analizador, nodo, tipo, tipo_valor)
+    # La columna es la del valor, como en el ejemplo del enunciado (§3.5.1, caso 5)
+    ubicacion = nodo.valor if getattr(nodo.valor, 'linea', None) is not None else nodo
+    analizador.error(ubicacion.linea, ubicacion.columna,
+                     f"No es posible asignar un valor de tipo {tipo_valor} a una variable de tipo {tipo}.")
 
 def verificar_tipo_definido(analizador, tipo, nodo):
     if tipo in TIPOS_PRIMITIVOS or tipo.startswith('[') or tipo.startswith('&'):
         return
     if analizador.tabla.buscar_struct(tipo) is not None:
         return
-    analizador.error(nodo.linea, nodo.columna, f"El tipo '{tipo}' no está definido")
+    analizador.error(nodo.linea, nodo.columna, f"El tipo '{tipo}' no está definido.")
 
 def tipo_elemento(tipo_array):
     if tipo_array.startswith('[') and ';' in tipo_array:
