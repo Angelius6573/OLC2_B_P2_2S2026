@@ -62,10 +62,10 @@ def visitar_Rango(self, nodo):
 
 def visitar_Break(self, nodo):
     if self._en_bucle == 0:
-        self.error(nodo.linea, nodo.columna, "break fuera de un bucle")
+        self.error(nodo.linea, nodo.columna, "La sentencia break está fuera de un bucle.")
     return None
 
 def visitar_Continue(self, nodo):
     if self._en_bucle == 0:
-        self.error(nodo.linea, nodo.columna, "continue fuera de un bucle")
+        self.error(nodo.linea, nodo.columna, "La sentencia continue está fuera de un bucle.")
     return None

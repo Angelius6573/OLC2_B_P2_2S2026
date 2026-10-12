@@ -17,7 +17,8 @@ def visitar_AccederIndice(self, nodo):
         if isinstance(indice, NumeroEntero):
             tamano = tamano_arreglo(tipo_actual)
             if tamano is not None and not (0 <= indice.valor < tamano):
-                self.error(nodo.linea, nodo.columna, f"Se accedió a un índice fuera del límite del arreglo '{nombre_objetivo(nodo.objetivo)}'")
+                self.error(nodo.linea, nodo.columna,
+                           f"Índice fuera de los límites del arreglo '{nombre_objetivo(nodo.objetivo)}'.")
         tipo_actual = tipo_elemento(tipo_actual)
     nodo.tipo = tipo_actual
     return tipo_actual
