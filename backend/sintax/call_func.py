@@ -12,6 +12,9 @@ def p_nombre_func_called(t):
                           | MAIN
     '''
     t[0] = t[1]
+    # Sin esto, fijar_ubicacion salta este no terminal y la llamada queda en el '('
+    t.set_lineno(0, t.lineno(1))
+    t.set_lexpos(0, t.lexpos(1))
 
 def p_params_func_called(t):
     '''params_func_called : params_func_called COMMA parametro_call
