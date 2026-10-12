@@ -215,9 +215,19 @@ def t_ignore_COMENTARIO_MULTI_LINEA(t):
     r'/\*[\s\S]*?\*/'
     t.lexer.lineno += t.value.count('\n')
 
+# Va después del comentario cerrado: PLY prueba las reglas de función en orden de definición
+def t_ignore_COMENTARIO_SIN_CIERRE(t):
+    r'/\*[\s\S]*'
+    reportar('Lexico', t.lineno, contar_columna(t.lexer.lexdata, t), "Comentario de bloque sin cierre: falta '*/'.")
+    t.lexer.lineno += t.value.count('\n')
+
 def contar_columna(input, token):
     linea = input.rfind('\n', 0, token.lexpos) + 1
     return (token.lexpos - linea) + 1
+
+def linea_columna(input, posicion):
+    inicio = input.rfind('\n', 0, posicion) + 1
+    return input.count('\n', 0, posicion) + 1, posicion - inicio + 1
 
 LEXEMA_TIPO = {
     **{v: k for k, v in reserved_words.items()},
@@ -245,7 +255,7 @@ def lexema_tipo(tipo):
     return LEXEMA_TIPO.get(tipo, tipo)
 
 def t_error(t):
-    reportar('Lexico', t.lineno, contar_columna(t.lexer.lexdata, t), f"Carácter no reconocido '{t.value[0]}'")
+    reportar('Lexico', t.lineno, contar_columna(t.lexer.lexdata, t), f"Carácter no reconocido '{t.value[0]}'.")
     t.lexer.skip(1)
 
 lexer = lex.lex()
@@ -256,5 +266,19 @@ lexer = lex.lex()
 _input_original = lexer.input
 def input_con_lineno_reset(data):
     lexer.lineno = 1
+    lexer.token_anterior = lexer.token_actual = None
     return _input_original(data)
 lexer.input = input_con_lineno_reset
+
+# El parser reporta un ';' o '}' faltante al final del token anterior. `fin` es la posición
+# tras el lexema original: el valor del token ya no la da (cadenas sin comillas, números convertidos).
+_token_original = lexer.token
+def token_con_rastreo():
+    lexer.token_anterior = lexer.token_actual
+    token = _token_original()
+    if token is not None:
+        token.fin = lexer.lexpos
+    lexer.token_actual = token
+    return token
+lexer.token = token_con_rastreo
+lexer.token_anterior = lexer.token_actual = None
