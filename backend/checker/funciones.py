@@ -2,7 +2,7 @@ from backend.ast_modular.funciones import LlamadaFuncion, Return
 from backend.ast_modular.funciones_embebidas import FuncionEmbebida
 from backend.ast_modular.aritmetica import Variable
 from backend.ast_modular.arrays import AccederIndice
-from backend.checker.helpers import se_esperaba
+from backend.checker.helpers import se_esperaba, inmutable
 
 def _variable_receptora(objetivo):
     # s.push_str(...) modifica s; m[i].push_str(...) modifica m
@@ -14,11 +14,12 @@ def visitar_LlamadaFuncion(self, nodo):
     nombre = nodo.nombre_funcion
     simbolo = self.tabla.buscar_funcion(nombre)
     if simbolo is None:
-        self.error(nodo.linea, nodo.columna, f"La función '{nombre}' utilizada no fue declarada")
+        self.error(nodo.linea, nodo.columna, f"La función '{nombre}' no ha sido declarada.")
         return None
     argumentos = [self.visitar(p) for p in nodo.parametros]
     if len(argumentos) != len(simbolo.parametros):
-        self.error(nodo.linea, nodo.columna, f"La función '{nombre}' esperaba '{len(simbolo.parametros)}' argumentos, pero recibió '{len(argumentos)}'")
+        self.error(nodo.linea, nodo.columna, f"La función '{nombre}' esperaba {len(simbolo.parametros)} argumentos, "
+                                             f"pero recibió {len(argumentos)}.")
     else:
         for (_, tipo_param), tipo_arg in zip(simbolo.parametros, argumentos):
             if tipo_arg is not None and tipo_arg != tipo_param:
@@ -28,17 +29,19 @@ def visitar_LlamadaFuncion(self, nodo):
 
 def visitar_Return(self, nodo):
     if self._funcion_actual is None:
-        self.error(nodo.linea, nodo.columna, "return fuera de una función")
+        self.error(nodo.linea, nodo.columna, "La sentencia return está fuera de una función.")
         return None
     retorno = self._funcion_actual.retorno
+    funcion = self._funcion_actual.nombre
     if nodo.valor is None:
         if retorno is not None:
-            se_esperaba(self, nodo, retorno, 'sin valor')
+            self.error(nodo.linea, nodo.columna, f"La función '{funcion}' debe devolver un valor de tipo {retorno}.")
         return None
     tipo_valor = self.visitar(nodo.valor)
     if tipo_valor is not None:
         if retorno is None:
-            se_esperaba(self, nodo, 'sin valor de retorno', tipo_valor)
+            self.error(nodo.linea, nodo.columna,
+                       f"La función '{funcion}' no declara tipo de retorno, pero devuelve un valor de tipo {tipo_valor}.")
         elif tipo_valor != retorno:
             se_esperaba(self, nodo, retorno, tipo_valor)
     return None
@@ -71,7 +74,7 @@ def visitar_FuncionEmbebida(self, nodo):
         receptora = _variable_receptora(nodo.objetivo)
         simbolo = self.tabla.buscar_variable(receptora.id) if receptora is not None else None
         if simbolo is not None and not simbolo.mutable:
-            self.error(nodo.linea, nodo.columna, f"No se puede modificar el valor de la variable '{receptora.id}' porque no fue declarada como mutable")
+            inmutable(self, nodo, receptora.id)
         for argumento in nodo.argumentos:
             tipo_argumento = self.visitar(argumento)
             if tipo_argumento is not None and tipo_argumento != 'String':
