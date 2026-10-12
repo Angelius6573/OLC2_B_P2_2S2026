@@ -22,7 +22,7 @@ def _declarar_struct(self, declaracion):
     if not self.tabla.declarar_struct(simbolo):
         self.error(
             declaracion.linea,
-            declaracion.columna, f"El struct '{declaracion.nombre_struct}' ya está definido",
+            declaracion.columna, f"El struct '{declaracion.nombre_struct}' ya fue declarado.",
         )
 
 def _declarar_funcion(self, declaracion):
@@ -40,7 +40,7 @@ def _declarar_funcion(self, declaracion):
     if not self.tabla.declarar_funcion(simbolo):
         self.error(
             declaracion.linea,
-            declaracion.columna, f"La función '{nombre}' ya está definida",
+            declaracion.columna, f"La función '{nombre}' ya fue declarada.",
         )
 
 def visitar_Programa(self, nodo):
@@ -69,7 +69,7 @@ def visitar_DeclaracionFuncion(self, nodo):
             columna=simbolo.columna,
             categoria='Parámetro',
         )):
-            self.error(nodo.linea, nodo.columna, f"La variable '{nombre_param}' ya está definida")
+            self.error(nodo.linea, nodo.columna, f"El parámetro '{nombre_param}' está repetido en la función '{nombre}'.")
     self._funcion_actual = simbolo
     for instruccion in nodo.bloque_ambito:
         self.visitar(instruccion)
