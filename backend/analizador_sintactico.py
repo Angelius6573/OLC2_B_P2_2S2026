@@ -1,5 +1,5 @@
 import ply.yacc as yacc
-from backend.analizador_lexico import contar_columna, lexema_tipo, lexer, tokens
+from backend.analizador_lexico import lexema_tipo, lexer, linea_columna, tokens
 from backend.errores import reportar
 
 from backend.sintax.Strings import *
@@ -34,12 +34,8 @@ precedence = (
 def tokens_esperados():
     estado = getattr(parser, 'state', None)
     if estado is None:
-        return 'nada'
-    acciones = parser.action.get(estado, {})
-    nombres = sorted(tok for tok in acciones if tok not in ('error', '$end'))
-    if not nombres:
-        return 'nada'
-    return " o ".join(lexema_tipo(nombre) for nombre in nombres)
+        return set()
+    return {tok for tok in parser.action.get(estado, {}) if tok not in ('error', '$end')}
 
 def p_init(t):
     'init : programa'
@@ -113,13 +109,33 @@ _SYNC_TOKENS = {
     'CLOSE_BRACE', 'EOF',
 }
 
+# Cierres en orden de prioridad: si falta uno al final de una línea, el error va tras el token anterior
+_CIERRES = (('SEMICOLON', ';'), ('CLOSE_BRACE', '}'), ('CLOSE_PAR', ')'), ('CLOSE_BRACKET', ']'))
+# Con más opciones que estas, la lista de esperados no ayuda a corregir
+_MAXIMO_SUGERIDOS = 3
+
+def _sugerencia(esperados):
+    if not esperados or len(esperados) > _MAXIMO_SUGERIDOS:
+        return ''
+    nombres = sorted(f"'{lexema_tipo(nombre)}'" for nombre in esperados)
+    lista = nombres[0] if len(nombres) == 1 else ', '.join(nombres[:-1]) + ' o ' + nombres[-1]
+    return f' Se esperaba {lista}.'
+
 def p_error(t):
-    if t:
-        columna = contar_columna(t.lexer.lexdata, t)
-        reportar('Sintactico', t.lineno, columna,
-                 f"Se esperaba '{tokens_esperados()}' pero se encontró '{t.value}'")
+    datos = lexer.lexdata
+    esperados = tokens_esperados()
+    anterior = lexer.token_anterior
+    cierre = next((lexema for nombre, lexema in _CIERRES if nombre in esperados), None)
+    salto_de_linea = anterior is not None and (t is None or '\n' in datos[anterior.fin:t.lexpos])
+    if cierre and salto_de_linea:
+        linea, columna = linea_columna(datos, anterior.fin)
+        reportar('Sintactico', linea, columna, f"Se esperaba '{cierre}'.")
+    elif t is None:
+        linea, columna = linea_columna(datos, anterior.fin) if anterior else (1, 1)
+        reportar('Sintactico', linea, columna, f'Fin de archivo inesperado.{_sugerencia(esperados)}')
     else:
-        reportar('Sintactico', lexer.lineno, 0,
-                 f"Se esperaba '{tokens_esperados()}' pero se encontró 'nada'")
+        linea, columna = linea_columna(datos, t.lexpos)
+        reportar('Sintactico', linea, columna,
+                 f"Token inesperado '{datos[t.lexpos:t.fin]}'.{_sugerencia(esperados)}")
 
 parser = yacc.yacc(start='init')
