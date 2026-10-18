@@ -7,7 +7,8 @@ class _BreakSignal(Exception):
         self.label = label
 
 class _ContinueSignal(Exception):
-    pass
+    def __init__(self, label=None):
+        self.label = label
 
 class Variable:
     __slots__ = ('valor', 'mutable')

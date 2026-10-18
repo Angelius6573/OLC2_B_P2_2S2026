@@ -132,7 +132,13 @@ def visitar_Break(self, nodo):
     raise ErrorGeneracion(f"No existe un bucle con la etiqueta '{nodo.label}", *posicion(nodo))
 
 def visitar_Continue(self, nodo):
-    # La gramática no le acepta etiqueta: siempre es el bucle más interno
     if not self._bucles:
         raise ErrorGeneracion('continue fuera de un bucle', *posicion(nodo))
-    self.e.instr('b', self._bucles[-1][1])
+    if nodo.label is None:
+        self.e.instr('b', self._bucles[-1][1])
+        return
+    for etiqueta, continuar, _ in reversed(self._bucles):
+        if etiqueta == nodo.label:
+            self.e.instr('b', continuar, comentario=f"continue '{nodo.label}")
+            return
+    raise ErrorGeneracion(f"No existe un bucle con la etiqueta '{nodo.label}", *posicion(nodo))

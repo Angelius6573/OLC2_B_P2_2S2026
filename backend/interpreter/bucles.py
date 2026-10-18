@@ -13,8 +13,10 @@ def visitar_BucleWhile(self, nodo):
             if e.label is None or e.label == nodo.label:
                 break
             raise
-        except _ContinueSignal:
-            continue
+        except _ContinueSignal as e:
+            if e.label is None or e.label == nodo.label:
+                continue
+            raise
     return None
 
 def visitar_BucleLoop(self, nodo):
@@ -25,8 +27,10 @@ def visitar_BucleLoop(self, nodo):
             if e.label is None or e.label == nodo.label:
                 break
             raise
-        except _ContinueSignal:
-            continue
+        except _ContinueSignal as e:
+            if e.label is None or e.label == nodo.label:
+                continue
+            raise
     return None
 
 def visitar_BucleFor(self, nodo):
@@ -48,8 +52,10 @@ def visitar_BucleFor(self, nodo):
             if e.label is None or e.label == nodo.label:
                 break
             raise
-        except _ContinueSignal:
-            continue
+        except _ContinueSignal as e:
+            if e.label is None or e.label == nodo.label:
+                continue
+            raise
     return None
 
 def visitar_Rango(self, nodo):
@@ -61,4 +67,4 @@ def visitar_Break(self, nodo):
     raise _BreakSignal(nodo.label)
 
 def visitar_Continue(self, nodo):
-    raise _ContinueSignal()
+    raise _ContinueSignal(nodo.label)
