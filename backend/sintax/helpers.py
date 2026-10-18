@@ -16,3 +16,11 @@ def fijar_ubicacion(t, nodo, pos=1):
             nodo.columna = getattr(valor, 'columna', None)
             return nodo
     return nodo
+
+def fijar_operador(t, nodo):
+    """Ubicación de una operación binaria t[1] op t[3]. Además guarda la del operador, que es donde
+    apuntan sus errores semánticos, como en el ejemplo de tipos incompatibles del enunciado."""
+    fijar_ubicacion(t, nodo)
+    operador = t.slice[2]
+    nodo.posicion_operador = (operador.lineno, contar_columna(t.lexer.lexdata, operador))
+    return nodo
