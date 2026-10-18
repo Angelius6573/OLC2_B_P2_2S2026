@@ -2,7 +2,7 @@ from backend.ast_modular.funciones import LlamadaFuncion, Return
 from backend.ast_modular.funciones_embebidas import FuncionEmbebida
 from backend.ast_modular.aritmetica import Variable
 from backend.ast_modular.arrays import AccederIndice
-from backend.checker.helpers import se_esperaba, inmutable
+from backend.checker.helpers import se_esperaba, inmutable, tipo_elemento
 
 def _variable_receptora(objetivo):
     # s.push_str(...) modifica s; m[i].push_str(...) modifica m
@@ -98,10 +98,14 @@ def visitar_FuncionEmbebida(self, nodo):
         return tipo_objetivo
     if nombre == 'contains':
         tipo_objetivo = self.visitar(nodo.objetivo)
-        if tipo_objetivo is not None and tipo_objetivo != 'String':
-            se_esperaba(self, nodo, 'String', tipo_objetivo)
-        for argumento in nodo.argumentos:
-            self.visitar(argumento)
+        tipo_argumento = self.visitar(nodo.argumentos[0])
+        if tipo_objetivo is not None and tipo_objetivo != 'String' and not tipo_objetivo.startswith('['):
+            se_esperaba(self, nodo, 'String o arreglo', tipo_objetivo)
+        elif tipo_objetivo is not None and tipo_argumento is not None:
+            # En un String se busca otro String; en un arreglo, un valor del tipo de sus elementos
+            esperado = 'String' if tipo_objetivo == 'String' else tipo_elemento(tipo_objetivo)
+            if tipo_argumento != esperado:
+                se_esperaba(self, nodo.argumentos[0], esperado, tipo_argumento)
         nodo.tipo = 'bool'
         return 'bool'
     if nombre == 'split':
