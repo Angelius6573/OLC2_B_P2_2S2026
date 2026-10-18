@@ -38,5 +38,6 @@ class Break(Nodo):
         self.label = label
 
 class Continue(Nodo):
-    def __init__(self):
+    def __init__(self, label=None):
         super().__init__()
+        self.label = label

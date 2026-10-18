@@ -50,5 +50,10 @@ def p_break_stmt(t):
         t[0] = fijar_ubicacion(t, Break(label=t[2]))
 
 def p_continue_stmt(t):
-    'continue_stmt : CONTINUE SEMICOLON'
-    t[0] = fijar_ubicacion(t, Continue())
+    '''continue_stmt : CONTINUE SEMICOLON
+                     | CONTINUE LABEL SEMICOLON
+    '''
+    if len(t) == 3:
+        t[0] = fijar_ubicacion(t, Continue())
+    else:
+        t[0] = fijar_ubicacion(t, Continue(label=t[2]))
