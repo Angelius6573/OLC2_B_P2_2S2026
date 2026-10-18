@@ -1,0 +1,27 @@
+// Pipeline ARM64: backend/arm64/pipeline/compilar.py
+digraph flujo_arm64 {
+  graph [rankdir=TB, fontname="Helvetica", fontsize=12, nodesep=0.35, ranksep=0.4, bgcolor="white"];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#f3eefc", color="#6d28d9"];
+  edge  [fontname="Helvetica", fontsize=9, color="#4c1d95"];
+
+  ast [label="AST validado\n+ TablaSimbolos", shape=oval, fillcolor="#ede9fe"];
+  gen [label="GeneradorARM64\nprograma.s\n(build/arm64/<uuid>/)"];
+  lib [label="lib/<tema>/ox_*.s\n(29 rutinas)"];
+  libA [label="liboxigen.a\n(as + ar, cacheada)"];
+  as [label="as -I lib\nprograma.o"];
+  ld [label="ld\nprograma.o + liboxigen.a\n→ programa"];
+  qemu [label="qemu-aarch64\n./programa\n(tiempo límite 10 s)"];
+  ok [label="stdout → salida\nstderr → errores [Ejecucion]\ncódigo de salida", shape=oval, fillcolor="#dcfce7", color="#15803d"];
+
+  e_gen [label="[Generacion]\nnodo no soportado\n(structs, slices → intérprete)", fillcolor="#fee2e2", color="#b91c1c"];
+  e_as  [label="[Generacion]\nlínea de programa.s,\netiqueta e instrucción", fillcolor="#fee2e2", color="#b91c1c"];
+  e_ld  [label="[Generacion]\nsímbolo sin definir", fillcolor="#fee2e2", color="#b91c1c"];
+  e_q   [label="[Ejecucion]\nseñal o tiempo límite", fillcolor="#fee2e2", color="#b91c1c"];
+
+  ast -> gen -> as -> ld -> qemu -> ok;
+  lib -> libA -> ld;
+  gen -> e_gen [style=dashed];
+  as -> e_as [style=dashed];
+  ld -> e_ld [style=dashed];
+  qemu -> e_q [style=dashed];
+}

@@ -1,12 +1,22 @@
-# Modelo de ejecución del intérprete — OxigenScript
+# Modo intérprete
 
 **Volver al índice:** [Documentación técnica](DOCUMENTACION_TECNICA.md)
 
-OxigenScript es un **intérprete**: no genera código de bajo nivel (ensamblador o código de máquina). En su lugar, recorre el **AST** en tiempo de ejecución y ejecuta cada nodo directamente. Esta sección describe ese mecanismo.
+El ejecutor principal es el compilador a ARM64 (ver [ARM64](arm64.md)). El **intérprete** del
+Proyecto 1 se conserva como modo alterno: se elige en la GUI con «Intérprete» y recorre el AST en
+Python en lugar de generar código máquina. La API también lo usa en tres casos del modo ARM64:
 
-## 4.1 Despacho por reflexión
+- el programa tiene errores semánticos (resiliencia);
+- el programa usa structs o slices, que el generador no traduce;
+- para calcular la columna «Valor» del reporte de símbolos, con una ejecución aparte y sin salida.
 
-El núcleo del recorrido está en `backend/recorrer_ast.py`. El método `visitar(nodo)` resuelve, por el nombre de la clase concreta, el método `visitar_{NombreClase}`; si no existe, cae a `_visitar_generico`.
+Su semántica se mantuvo **sin cambios** durante el Proyecto 2. Las diferencias con ARM64 están
+listadas en [decisiones](decisiones.md#5-divergencias-conscientes-con-el-intérprete).
+
+## 1. Despacho por reflexión
+
+`backend/recorrer_ast.py` resuelve, por el nombre de la clase del nodo, el método
+`visitar_<NombreClase>`. Si no existe, usa `_visitar_generico`:
 
 ```python
 def visitar(self, nodo):
@@ -22,28 +32,23 @@ def visitar(self, nodo):
     return metodo(nodo)
 ```
 
-Tanto el analizador semántico como el intérprete enlazan sus funciones `visitar_*` como atributos de clase (p. ej. `visitar_OperacionBinaria = visitar_OperacionBinaria`), de modo que el despacho se resuelve por convención de nombres.
+`Interprete` (`backend/interpreter/interprete.py`) importa sus funciones `visitar_*` desde
+`backend/interpreter/` y las asigna como atributos de clase.
 
-## 4.2 Modelo de memoria y ámbitos
+## 2. Ámbitos
 
-El intérprete (`backend/interpreter/interprete.py`) mantiene:
-
-- `ambito_global`: ámbito raíz.
-- `ambito_actual`: puntero mutable al ámbito vigente.
-- `funciones` y `structs`: registros globales.
-- `_funciones_embebidas`: diccionario de funciones integradas.
-
-Los ámbitos se modelan como una **cadena de padres**:
+El intérprete mantiene `ambito_global`, `ambito_actual` (el vigente), `funciones`, `structs` y
+el diccionario de funciones embebidas. Un ámbito es una cadena de padres:
 
 ```python
 class Ambito:
     __slots__ = ('variables', 'padre')
-    def declarar(self, nombre, valor, mutable=False): ...   # sobreescribe silencioso
-    def asignar(self, nombre, valor): ...                    # respeta mutabilidad
-    def buscar(self, nombre): ...                            # recorre hacia arriba
+    def declarar(self, nombre, valor, mutable=False): ...
+    def asignar(self, nombre, valor): ...     # respeta la mutabilidad
+    def buscar(self, nombre): ...             # sube por los padres
 ```
 
-`_ejecutar_bloque(bloque)` crea un `Ambito` hijo, ejecuta las sentencias y restaura el ámbito anterior en un bloque `finally` (scoping léxico).
+Cada bloque crea un ámbito hijo y restaura el anterior al salir, aunque haya una excepción:
 
 ```python
 def _ejecutar_bloque(self, bloque):
@@ -56,20 +61,34 @@ def _ejecutar_bloque(self, bloque):
         self.ambito_actual = anterior
 ```
 
-## 4.3 Control de flujo no local mediante excepciones
+## 3. Control de flujo no local
 
-Las transferencias de control (retorno de función, `break`, `continue`) se implementan con excepciones internas:
+`return`, `break` y `continue` se implementan con excepciones internas:
 
-- `_ReturnValue` — capturada en `_llamar_funcion`.
-- `_BreakSignal(label)` — capturada en los bucles; compara la etiqueta.
-- `_ContinueSignal` — capturada en los bucles.
+- `_ReturnValue`, capturada al llamar a una función.
+- `_BreakSignal(label)`, capturada por los bucles; si la etiqueta no es la del bucle, se relanza
+  hacia el bucle exterior (`break 'externo;`).
+- `_ContinueSignal`, capturada por los bucles.
 
-Esto simplifica el salto no local dentro de un recorrido recursivo y soporta `break 'etiqueta` (si la etiqueta no coincide, la excepción se relanza hacia el bucle correcto).
+## 4. Errores y salida
 
-## 4.4 Captura de salida
+Un error de ejecución (`RuntimeError`) detiene el intérprete. `Interprete.ejecutar` lo registra
+en `backend/errores.py` con la posición al inicio del texto (`3:10 División por cero`), y
+`api/modo_interprete.py` la convierte en línea y columna para la tabla de errores.
 
-La API captura el `stdout` del intérprete con `io.StringIO` + `contextlib.redirect_stdout`, de modo que la salida del `println!` se devuelve como cadena en la respuesta de `/api/compile`.
+La API captura la salida de `println!` con `contextlib.redirect_stdout` sobre un `io.StringIO`.
 
-## 4.5 Generación del grafo del AST (PNG)
+## 5. Columna «Valor» de la tabla de símbolos
 
-`backend/visitor/grafo.py` usa **Graphviz** (`Digraph('AST', format='png')`, `rankdir='TB'`). El `VisitarGrafo` recorre el AST y crea un nodo por cada clase (etiqueta = nombre de clase + atributos escalares) y aristas a sus hijos. `renderizar()` guarda el resultado en `assets/ast/` con nombre único `ast_<milisegundos>.png` y devuelve el nombre del archivo, que la API sirve en `/api/ast/{filename}`.
+`InterpreteConValores` (`backend/reportes/interprete_valores.py`) es una subclase que observa la
+ejecución sin cambiarla. Por cada `sym_id` guarda el objeto de la variable (declaraciones,
+variable del `for` y parámetros). Como asignar, `+=` y `push_str` modifican ese mismo objeto, al
+final tiene el último valor. Se detiene tras un millón de pasos, para que un bucle infinito no
+bloquee el reporte.
+
+## 6. Grafo del AST
+
+`backend/visitor/grafo.py` recorre el AST con `VisitarGrafo`: crea un nodo de Graphviz por cada
+nodo del árbol, etiquetado con su clase y sus atributos simples (incluidos `tipo` y `sym_id`
+anotados por el checker), y una arista hacia cada hijo. `renderizar()` escribe el archivo DOT y lo
+convierte a PNG en `assets/ast/ast_<milisegundos>.png`, que la API sirve en `/api/ast/<archivo>`.

@@ -1,0 +1,46 @@
+// Flujo de procesamiento de una compilación: api/compiler.py:compilar_codigo
+digraph flujo_compilacion {
+  graph [rankdir=TB, fontname="Helvetica", fontsize=12, nodesep=0.45, ranksep=0.45, bgcolor="white"];
+  node  [fontname="Helvetica", fontsize=10, shape=box, style="rounded,filled", fillcolor="#f3eefc", color="#6d28d9"];
+  edge  [fontname="Helvetica", fontsize=9, color="#4c1d95"];
+
+  inicio [label="POST /api/compile\n{code, mode}", shape=oval, fillcolor="#ede9fe"];
+  limpiar [label="errores.limpiar()\nvacía la lista global de errores"];
+  lexsin [label="parser.parse(codigo)\nel lexer entrega tokens bajo demanda\nerrores léxicos y sintácticos → backend/errores.py\nrecuperación: instruccion : error"];
+  hayast [label="¿Hay AST?", shape=diamond, fillcolor="#fef3c7", color="#b45309"];
+  semantico [label="AnalizadorSemantico.analizar(programa)\n1) colectar_declaraciones: funciones y structs\n2) visitar: tipos, ámbitos, mutabilidad\nanota nodo.tipo y nodo.sym_id\nllena TablaSimbolos"];
+  grafo [label="VisitarGrafo → DOT → PNG\nassets/ast/ast_<ms>.png"];
+  modo [label="¿Modo?", shape=diamond, fillcolor="#fef3c7", color="#b45309"];
+  previos [label="¿Errores léxicos\no sintácticos?", shape=diamond, fillcolor="#fef3c7", color="#b45309"];
+  semerr [label="¿Errores\nsemánticos?", shape=diamond, fillcolor="#fef3c7", color="#b45309"];
+  interp [label="Intérprete\nInterpreteConValores\nsalida capturada (stdout)"];
+  respaldo [label="Intérprete (resiliencia)\narm64.notice explica por qué"];
+  arm [label="Pipeline ARM64\ngenerar → as → ld → qemu"];
+  soporta [label="¿El generador\nsoporta el programa?", shape=diamond, fillcolor="#fef3c7", color="#b45309"];
+  valores [label="Intérprete sin salida\nsolo para la columna «Valor»"];
+  noejec [label="No se ejecuta"];
+  tabla_err [label="filas_errores(tuplas, codigo)\nordena, quita duplicados,\nfragmento con ^ y formato del enunciado"];
+  tabla_sim [label="filas_simbolos + escribir_reporte\nbuild/reportes/simbolos_<ms>.html"];
+  estado [label="estado_ejecucion\nmensaje de la consola"];
+  fin [label="Respuesta JSON", shape=oval, fillcolor="#ede9fe"];
+  solo_err [label="Solo la tabla de errores", shape=oval, fillcolor="#ede9fe"];
+
+  inicio -> limpiar -> lexsin -> hayast;
+  hayast -> solo_err [label="no"];
+  hayast -> semantico [label="sí"];
+  semantico -> grafo -> modo;
+  modo -> interp [label="interprete"];
+  modo -> previos [label="arm64"];
+  previos -> noejec [label="sí"];
+  previos -> semerr [label="no"];
+  semerr -> respaldo [label="sí"];
+  semerr -> arm [label="no"];
+  arm -> soporta;
+  soporta -> valores [label="sí"];
+  soporta -> respaldo [label="no (structs, slices)"];
+  interp -> tabla_err;
+  respaldo -> tabla_err;
+  valores -> tabla_err;
+  noejec -> tabla_err;
+  tabla_err -> tabla_sim -> estado -> fin;
+}

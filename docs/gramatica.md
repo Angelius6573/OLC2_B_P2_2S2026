@@ -1,6 +1,15 @@
-# Gramática formal — OxigenScript
+# Gramática formal
 
 **Volver al índice:** [Documentación técnica](DOCUMENTACION_TECNICA.md)
+
+Gramática de OxigenNative en notación EBNF. Corresponde a las reglas `p_*` de `backend/sintax/` y
+de `backend/analizador_sintactico.py`; PLY construye con ellas un analizador LALR. La lista exacta
+de producciones que usa PLY está en `backend/parser.out`, que se regenera al cambiar la gramática.
+Los terminales (palabras reservadas, operadores, literales y comentarios) están en
+[reglas léxicas](lexico.md).
+
+Notación: `{ x }` es cero o más repeticiones, `[ x ]` es opcional, `|` separa alternativas, `ε` es
+la cadena vacía y los terminales literales van entre comillas.
 
 ## 3.1 Gramática (notación EBNF)
 
@@ -257,8 +266,12 @@ tipo_dec_string      → from_directo | new_posterior
 from_directo         → 'from' '(' tipo_cadena ')'      (* String::from(...) *)
 new_posterior        → 'new' '(' ')'                   (* String::new() *)
 
-asignar_valor_string → operando '.' 'push_str' '(' tipo_cadena ')'   (* sentencia *)
+tipo_cadena          → CADENA | RAWSTRING
+
+asignar_valor_string → operando '.' 'push_str' '(' expresion ')'     (* sentencia *)
 ```
+
+`push_str` acepta cualquier expresión; el análisis semántico exige que sea de tipo `String`.
 
 ### l) Impresión
 
@@ -269,11 +282,14 @@ argumentos_impresion → CADENA
                       | CADENA ',' operaciones_directas
                       | RAWSTRING
                       | RAWSTRING ',' operaciones_directas
+                      | operaciones_directas            (* println!(a, b, c) *)
 
 operaciones_directas → operaciones_directas ',' valor | valor
 ```
 
-Los placeholders `{}` (formato plano) y `{:?}` (formato debug) se reemplazan de izquierda a derecha.
+Los marcadores `{}` (formato normal) y `{:?}` (formato de depuración) se reemplazan de izquierda a
+derecha. Sin cadena de formato (`println!(a, b, c)`), los valores se imprimen separados por un
+espacio. Una cadena cruda (`r"..."`) no admite argumentos.
 
 ### m) Funciones embebidas
 

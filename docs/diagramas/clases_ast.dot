@@ -1,0 +1,100 @@
+// Diagrama de clases de los nodos del AST: backend/ast.py y backend/ast_modular/
+// Toda clase hereda de Nodo (linea, columna). El checker añade tipo y sym_id a algunos nodos.
+digraph clases_ast {
+  graph [rankdir=BT, compound=true, fontname="Helvetica", fontsize=12, nodesep=0.25, ranksep=0.9, bgcolor="white"];
+  node  [fontname="Helvetica", fontsize=9, shape=record, style=filled, fillcolor="#f3eefc", color="#6d28d9"];
+  edge  [fontname="Helvetica", fontsize=8, color="#4c1d95"];
+
+  Nodo [label="{Nodo|linea : int\lcolumna : int\l|__repr__()\l}", fillcolor="#ddd6fe"];
+  Programa [label="{Programa|declaraciones : list\l}"];
+
+  subgraph cluster_aritmetica {
+    label="aritmetica.py"; color="#a78bfa"; style=rounded;
+    NumeroEntero [label="{NumeroEntero|valor : int\l}"];
+    NumeroFloat [label="{NumeroFloat|valor : float\l}"];
+    Cadena [label="{Cadena|string : str\l}"];
+    Caracter [label="{Caracter|valor : str\l}"];
+    Booleano [label="{Booleano|valor : bool\l}"];
+    Variable [label="{Variable|id : str\l}"];
+    OperacionBinaria [label="{OperacionBinaria|izquierda : Nodo\loperador : str\lderecha : Nodo\l}"];
+    OperacionUnaria [label="{OperacionUnaria|operador : str\lderecha : Nodo\l}"];
+  }
+  subgraph cluster_variables {
+    label="variables.py"; color="#a78bfa"; style=rounded;
+    DeclaracionVariable [label="{DeclaracionVariable|nombre : str\lmutabilidad : str\ltipo : str\lvalor : Nodo\l}"];
+    Asignacion [label="{Asignacion|nombre : str\lvalor : Nodo\l}"];
+    AsignacionCompuesta [label="{AsignacionCompuesta|nombre : str\loperador : str\lvalor : Nodo\l}"];
+  }
+  subgraph cluster_control {
+    label="condicionales.py · bucles.py"; color="#a78bfa"; style=rounded;
+    Condicional [label="{Condicional|condicion : Nodo\lbloque_verdadero : list\lbloque_falso : list \| Condicional\l}"];
+    BloqueBare [label="{BloqueBare|bloque : list\l}"];
+    BucleWhile [label="{BucleWhile|condicion : Nodo\lbloque_ambito : list\llabel : str\l}"];
+    BucleLoop [label="{BucleLoop|bloque_ambito : list\llabel : str\l}"];
+    BucleFor [label="{BucleFor|variable : str\literable : Rango \| Nodo\lbloque_ambito : list\llabel : str\l}"];
+    Rango [label="{Rango|inicio : Nodo\lfin : Nodo\l}"];
+    Break [label="{Break|label : str\l}"];
+    Continue [label="{Continue|}"];
+  }
+  subgraph cluster_funciones {
+    label="funciones.py · funciones_embebidas.py"; color="#a78bfa"; style=rounded;
+    DeclaracionFuncion [label="{DeclaracionFuncion|nombre_funcion : NombreFuncion\lparametros_funcion : list\lvalor_retorno : str\lbloque_ambito : list\l}"];
+    NombreFuncion [label="{NombreFuncion|nombre_conjunto : str\lnombre_funcion : str\l}"];
+    LlamadaFuncion [label="{LlamadaFuncion|nombre_funcion : str\lparametros : list\l}"];
+    Return [label="{Return|valor : Nodo\l}"];
+    FuncionEmbebida [label="{FuncionEmbebida|nombre : str\lobjetivo : Nodo\largumentos : list\l}"];
+  }
+  subgraph cluster_impresion {
+    label="impresion.py · match.py"; color="#a78bfa"; style=rounded;
+    Imprimir [label="{Imprimir|argumentos_impresion : ArgumentosImpresion\l}"];
+    ArgumentosImpresion [label="{ArgumentosImpresion|cadena : str\loperaciones_directas : list\les_rawstring : bool\l}"];
+    Match [label="{Match|expresion : Nodo\lbrazos : list[MatchCase]\l}"];
+    MatchCase [label="{MatchCase|patron : Nodo\lcuerpo : Nodo\l}"];
+    MatchBase [label="{MatchBase|(patrón _)\l}"];
+  }
+  subgraph cluster_datos {
+    label="arrays.py · Strings.py · struct.py"; color="#a78bfa"; style=rounded;
+    AccederIndice [label="{AccederIndice|objetivo : Nodo\lindices : list\l}"];
+    AsignarIndice [label="{AsignarIndice|objetivo : AccederIndice\lvalor : Nodo\l}"];
+    Repetidor [label="{Repetidor|valor : Nodo\lcantidad : Nodo\l}"];
+    Slice [label="{Slice|objetivo : Nodo\linicio : Nodo\lfin : Nodo\l}"];
+    DeclaracionString [label="{DeclaracionString|metodo : 'from' \| 'new'\lvalor : str\l}"];
+    DeclaracionStruct [label="{DeclaracionStruct|nombre_struct : str\lparametros_struct : list[Parametros]\l}"];
+    Parametros [label="{Parametros|parametro : str\ltipo_parametro : str\l}"];
+    InstanciarStruct [label="{InstanciarStruct|nombre : str\lparametros : list[AsignarParametro]\l}"];
+    AsignarParametro [label="{AsignarParametro|nombre : str\lvalor : Nodo\l}"];
+    AccederCampo [label="{AccederCampo|objetivo : Nodo\lcampo : str\l}"];
+    ValorRequerido [label="{ValorRequerido|valor : Nodo\l}"];
+  }
+
+  // Cada módulo en una columna: cadenas invisibles para que el diagrama no crezca a lo ancho
+  {
+    edge [style=invis];
+    NumeroEntero -> NumeroFloat -> Cadena -> Caracter -> Booleano -> Variable -> OperacionBinaria -> OperacionUnaria;
+    DeclaracionVariable -> Asignacion -> AsignacionCompuesta -> Programa;
+    Condicional -> BloqueBare -> BucleWhile -> BucleLoop -> BucleFor -> Rango -> Break -> Continue;
+    LlamadaFuncion -> Return -> FuncionEmbebida -> DeclaracionFuncion -> NombreFuncion;
+    Imprimir -> ArgumentosImpresion -> Match -> MatchCase -> MatchBase;
+    AccederIndice -> AsignarIndice -> Repetidor -> Slice -> DeclaracionString -> AccederCampo -> ValorRequerido;
+    DeclaracionStruct -> Parametros -> InstanciarStruct -> AsignarParametro;
+  }
+
+  // Generalización: cada grupo hereda de Nodo
+  Programa -> Nodo [arrowhead=onormal];
+  Variable -> Nodo [ltail=cluster_aritmetica, arrowhead=onormal];
+  Asignacion -> Nodo [ltail=cluster_variables, arrowhead=onormal];
+  BucleLoop -> Nodo [ltail=cluster_control, arrowhead=onormal];
+  Return -> Nodo [ltail=cluster_funciones, arrowhead=onormal];
+  Imprimir -> Nodo [ltail=cluster_impresion, arrowhead=onormal];
+  Slice -> Nodo [ltail=cluster_datos, arrowhead=onormal];
+
+  // Composición más relevante
+  edge [arrowhead=none, arrowtail=diamond, dir=back, style=dashed, color="#7c3aed"];
+  Imprimir -> ArgumentosImpresion;
+  Match -> MatchCase;
+  DeclaracionFuncion -> NombreFuncion;
+  AsignarIndice -> AccederIndice;
+  BucleFor -> Rango;
+  DeclaracionStruct -> Parametros;
+  InstanciarStruct -> AsignarParametro;
+}

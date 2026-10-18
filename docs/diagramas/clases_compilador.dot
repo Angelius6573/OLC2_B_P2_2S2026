@@ -1,0 +1,48 @@
+// Diagrama de clases del compilador: recorredores del AST, tabla de símbolos y backend ARM64
+digraph clases_compilador {
+  graph [rankdir=BT, fontname="Helvetica", fontsize=12, nodesep=0.35, ranksep=0.7, bgcolor="white"];
+  node  [fontname="Helvetica", fontsize=9, shape=record, style=filled, fillcolor="#f3eefc", color="#6d28d9"];
+  edge  [fontname="Helvetica", fontsize=8, color="#4c1d95"];
+
+  RecorrerAST [label="{RecorrerAST\n(backend/recorrer_ast.py)||visitar(nodo)\l→ visitar_\<Clase\>(nodo)\l_visitar_generico(nodo)\l}", fillcolor="#ddd6fe"];
+
+  AnalizadorSemantico [label="{AnalizadorSemantico\n(analizador_semantico.py + checker/)|tabla : TablaSimbolos\lerrores : list\l_en_bucle : int\l_funcion_actual : SimboloFuncion\l|analizar(programa)\lcolectar_declaraciones(programa)\lerror(linea, columna, mensaje)\lvisitar_*  (mixins de checker/)\l}"];
+  Interprete [label="{Interprete\n(interpreter/interprete.py)|ambito_global : Ambito\lambito_actual : Ambito\lfunciones : dict\lstructs : dict\l|ejecutar(programa)\lvisitar_*  (mixins de interpreter/)\l}"];
+  InterpreteConValores [label="{InterpreteConValores\n(reportes/interprete_valores.py)|celdas : dict[sym_id, Variable]\l_limite_pasos : int\l|observa sin cambiar la semántica\l}"];
+  GeneradorARM64 [label="{GeneradorARM64\n(arm64/generador.py + generacion/)|tabla : TablaSimbolos\lprograma : ProgramaARM64\lmarco : MarcoFuncion\le : Emisor (función actual)\l_bucles : list (pila de bucles)\l_fin_sentencia : str\l|generar(programa) → str\lsentencia(nodo) / temporal()\lerror_runtime(codigo, nodo)\l_visitar_generico → ErrorGeneracion\lvisitar_*  (mixins de generacion/)\l}"];
+  VisitarGrafo [label="{VisitarGrafo\n(visitor/grafo.py)|grafo : graphviz.Digraph\l|renderizar() → ast_\<ms\>.png\l}"];
+
+  TablaSimbolos [label="{TablaSimbolos\n(checker/tabla_simbolos.py)|ambitos : list[dict]\lfunciones : dict\lstructs : dict\lambito_nombre : str\lsimbolos : list (historial)\lvariables_por_sym_id : dict\l|abrir_ambito() / cerrar_ambito()\ldeclarar_variable(s) / buscar_variable(n)\ldeclarar_funcion(s) / buscar_funcion(n)\ldeclarar_struct(s) / buscar_struct(n)\lvariables_de(funcion)\lreporte() → filas del reporte\l}"];
+  SimboloVariable [label="{SimboloVariable|nombre, tipo, mutable\llinea, columna, categoria\lsym_id, ambito\loffset (slot en el marco)\l}"];
+  SimboloFuncion [label="{SimboloFuncion|nombre, parametros\lretorno, linea, columna\l}"];
+  SimboloStruct [label="{SimboloStruct|nombre, campos\llinea, columna\l}"];
+  Ambito [label="{Ambito\n(interpreter/runtime.py)|variables : dict\lpadre : Ambito\l|declarar / asignar / buscar\l}"];
+
+  ProgramaARM64 [label="{ProgramaARM64\n(arm64/programa.py)|literales : TablaLiterales\lfunciones : Emisor\ldatos : Emisor (.rodata)\l|agregar_funcion(marco, cuerpo)\ltexto() → programa.s\l}"];
+  MarcoFuncion [label="{MarcoFuncion\n(arm64/layout.py)|nombre : str\loffsets : dict[sym_id, int]\ltemporales : list\l|reservar_variable(sym_id)\lreservar_temporal()\ltamanio() (múltiplo de 16)\lemitir_prologo(e) / emitir_epilogo(e)\l}"];
+  Emisor [label="{Emisor\n(arm64/emisor.py)|lineas : list\l|seccion() / etiqueta()\linstr(op, *operandos)\lcomentario() con //\lcargar_inmediato()\l}"];
+  TablaLiterales [label="{TablaLiterales\n(arm64/literales.py)||etiqueta(contenido) → texto_*\lemitir(emisor) en .rodata\l}"];
+  ResultadoARM64 [label="{ResultadoARM64\n(arm64/pipeline/resultado.py)|etapa, exito, asm\lsalida, salida_errores\lcodigo_salida, errores\ltiempos, carpeta\l}"];
+
+  AnalizadorSemantico -> RecorrerAST [arrowhead=onormal];
+  Interprete -> RecorrerAST [arrowhead=onormal];
+  GeneradorARM64 -> RecorrerAST [arrowhead=onormal];
+  VisitarGrafo -> RecorrerAST [arrowhead=onormal];
+  InterpreteConValores -> Interprete [arrowhead=onormal];
+
+  edge [arrowhead=none, arrowtail=diamond, dir=back, color="#7c3aed"];
+  AnalizadorSemantico -> TablaSimbolos [label="1"];
+  TablaSimbolos -> SimboloVariable [label="*"];
+  TablaSimbolos -> SimboloFuncion [label="*"];
+  TablaSimbolos -> SimboloStruct [label="*"];
+  Interprete -> Ambito [label="cadena de padres"];
+  GeneradorARM64 -> ProgramaARM64;
+  GeneradorARM64 -> MarcoFuncion [label="uno por función"];
+  ProgramaARM64 -> Emisor;
+  ProgramaARM64 -> TablaLiterales;
+
+  edge [arrowhead=vee, arrowtail=none, dir=forward, style=dashed, color="#6b7280"];
+  GeneradorARM64 -> TablaSimbolos [label="lee sym_id\lescribe offset"];
+  InterpreteConValores -> TablaSimbolos [label="lee sym_id"];
+  ResultadoARM64 -> GeneradorARM64 [label="compilar_y_ejecutar\lusa generar_arm64"];
+}

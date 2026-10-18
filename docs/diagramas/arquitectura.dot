@@ -1,0 +1,48 @@
+// Arquitectura monolítica cliente/servidor
+digraph arquitectura {
+  graph [rankdir=TB, fontname="Helvetica", fontsize=12, nodesep=0.5, ranksep=0.5, bgcolor="white"];
+  node  [fontname="Helvetica", fontsize=11, shape=box, style="rounded,filled", fillcolor="#f3eefc", color="#6d28d9"];
+  edge  [fontname="Helvetica", fontsize=10, color="#4c1d95"];
+
+  subgraph cluster_cliente {
+    label="Navegador (capa de presentación)"; style="rounded"; color="#a78bfa";
+    gui [label="IDE web (Astro + CodeMirror)\nfrontend/src/pages/dashboard.astro\nEditor · ARM64 · Consola · Reportes"];
+  }
+
+  subgraph cluster_servidor {
+    label="Servidor Linux (una sola aplicación)"; style="rounded"; color="#a78bfa";
+
+    api [label="API REST (FastAPI + Uvicorn)\napi/main.py · api/compiler.py\nPOST /api/compile · POST /api/tokens\nGET /api/ast/* · GET /api/reportes/*"];
+
+    subgraph cluster_lenguaje {
+      label="Definición del lenguaje (PLY)"; style="rounded,dashed"; color="#8b5cf6";
+      lexer  [label="Léxico\nanalizador_lexico.py"];
+      parser [label="Sintáctico + AST\nanalizador_sintactico.py\nsintax/ · ast_modular/"];
+      checker [label="Semántico + tabla de símbolos\nanalizador_semantico.py · checker/"];
+    }
+
+    subgraph cluster_backend {
+      label="Ejecutores"; style="rounded,dashed"; color="#8b5cf6";
+      gen  [label="Generador ARM64\nbackend/arm64/generador.py\ngeneracion/"];
+      interp [label="Intérprete (modo alterno)\nbackend/interpreter/"];
+    }
+
+    reportes [label="Reportes\nbackend/reportes/ (errores, símbolos HTML)\nbackend/visitor/grafo.py (AST, Graphviz)"];
+  }
+
+  subgraph cluster_arm {
+    label="Entorno ARM64 (QEMU User Mode)"; style="rounded"; color="#a78bfa";
+    as   [label="aarch64-linux-gnu-as\nprograma.s → programa.o"];
+    ld   [label="aarch64-linux-gnu-ld\n+ liboxigen.a (backend/arm64/lib/)"];
+    qemu [label="qemu-aarch64\n./programa"];
+  }
+
+  gui -> api [label="JSON {code, mode}"];
+  api -> gui [label="JSON {output, errors, symbols,\narm64, ast_image, status}", style=dashed];
+  api -> lexer -> parser -> checker;
+  checker -> gen [label="AST validado"];
+  checker -> interp [label="modo intérprete\no errores semánticos"];
+  checker -> reportes;
+  gen -> as -> ld -> qemu;
+  qemu -> api [label="stdout / stderr\ncódigo de salida", style=dashed];
+}
