@@ -4,7 +4,7 @@ from backend.ast_modular.aritmetica import OperacionBinaria, OperacionUnaria, Va
 from backend.ast_modular.arrays import AccederIndice, Slice
 from backend.ast_modular.funciones_embebidas import FuncionEmbebida
 from backend.ast_modular.struct import AccederCampo
-from backend.sintax.helpers import fijar_ubicacion
+from backend.sintax.helpers import fijar_ubicacion, fijar_operador
 
 def p_operacion_aritmetica(t):
     '''operacion_aritmetica : operacion_aritmetica MINUS operadores_multiplicativos
@@ -14,7 +14,7 @@ def p_operacion_aritmetica(t):
     if len(t) == 2:
         t[0] = t[1]
     else:
-        t[0] = fijar_ubicacion(t, OperacionBinaria(izquierda=t[1], operador=t[2], derecha=t[3]))
+        t[0] = fijar_operador(t, OperacionBinaria(izquierda=t[1], operador=t[2], derecha=t[3]))
 
 def p_operadores_multiplicativos(t):
     '''operadores_multiplicativos : operadores_multiplicativos DIV operacion_unaria
@@ -25,7 +25,7 @@ def p_operadores_multiplicativos(t):
     if len(t) == 2:
         t[0] = t[1]
     else:
-        t[0] = fijar_ubicacion(t, OperacionBinaria(izquierda=t[1], operador=t[2], derecha=t[3]))
+        t[0] = fijar_operador(t, OperacionBinaria(izquierda=t[1], operador=t[2], derecha=t[3]))
 
 def p_operacion_unaria(t):
     '''operacion_unaria : MINUS operacion_unaria %prec NEGACION_UNARIA
@@ -98,12 +98,8 @@ def p_operando_to_lowercase(t):
     t[0] = fijar_ubicacion(t, FuncionEmbebida(nombre='to_lowercase', objetivo=t[1], argumentos=[]))
 
 def p_operando_contains(t):
-    'operando : operando DOT CONTAINS OPEN_PAR CADENA CLOSE_PAR'
-    t[0] = fijar_ubicacion(t, FuncionEmbebida(
-        nombre='contains',
-        objetivo=t[1],
-        argumentos=[Cadena(string=t[5])]
-    ))
+    'operando : operando DOT CONTAINS OPEN_PAR expresion CLOSE_PAR'
+    t[0] = fijar_ubicacion(t, FuncionEmbebida(nombre='contains', objetivo=t[1], argumentos=[t[5]]))
 
 def p_operando_split(t):
     'operando : operando DOT SPLIT OPEN_PAR CADENA CLOSE_PAR'
