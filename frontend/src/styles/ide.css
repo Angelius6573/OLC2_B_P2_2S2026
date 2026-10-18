@@ -1,4 +1,4 @@
-/* Distribución del IDE (enunciado §3.1.2): barra, editor | ARM64, consola | reportes */
+/* Distribución del IDE: barra, editor | ARM64, consola | reportes */
 .ide {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) minmax(0, 1fr);

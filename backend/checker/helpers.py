@@ -5,7 +5,7 @@ from backend.checker.tipos import LITERALES, NUMERICOS, TIPOS_PRIMITIVOS
 def es_literal(nodo):
     return isinstance(nodo, LITERALES)
 
-# Textos de los errores semánticos con la redacción del enunciado §3.5.1
+# Textos de los errores semánticos con la redacción del enunciado
 def se_esperaba(analizador, nodo, esperado, obtenido):
     analizador.error(nodo.linea, nodo.columna, f"Tipos incompatibles. No es posible utilizar un valor de tipo "
                                                f"{obtenido} donde se esperaba un valor de tipo {esperado}.")
@@ -24,7 +24,7 @@ def inmutable(analizador, nodo, nombre):
 def verificar_asignacion(analizador, nodo, tipo, tipo_valor):
     if tipo == tipo_valor:
         return
-    # La columna es la del valor, como en el ejemplo del enunciado (§3.5.1, caso 5)
+    # La columna es la del valor, como en el ejemplo de tipos incompatibles del enunciado
     ubicacion = nodo.valor if getattr(nodo.valor, 'linea', None) is not None else nodo
     analizador.error(ubicacion.linea, ubicacion.columna,
                      f"No es posible asignar un valor de tipo {tipo_valor} a una variable de tipo {tipo}.")

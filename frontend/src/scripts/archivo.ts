@@ -8,7 +8,7 @@ function mostrarNombre() {
   elemento('nombre-archivo').textContent = `· ${nombre}`;
 }
 
-// Nuevo, Abrir y Guardar (enunciado §3.1.2). Abrir lee un .ox del disco y lo carga en el editor
+// Nuevo, Abrir y Guardar. Abrir lee un .ox del disco y lo carga en el editor
 export function iniciarArchivo(editor: Editor, alNuevo: () => void) {
   const entrada = elemento('entrada-archivo') as HTMLInputElement;
   mostrarNombre();

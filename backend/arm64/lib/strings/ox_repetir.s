@@ -1,6 +1,6 @@
 // ox_repetir(x0 = puntero, x1 = longitud, x2 = veces)
 //   -> x0 = bloque nuevo con el texto repetido, x1 = longitud * veces
-// Nota del enunciado §3.3.5: 2 * "ab" = "abab". Con veces <= 0 el resultado es el texto vacío.
+// Igual que "ab" * 2: 2 * "ab" = "abab". Con veces <= 0 el resultado es el texto vacío.
 .global ox_repetir
 
 .section .text

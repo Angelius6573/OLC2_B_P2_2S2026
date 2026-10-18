@@ -1,6 +1,6 @@
 import re
 
-# Categoría interna -> (columna Tipo de la tabla, encabezado del mensaje), enunciado §3.5.1
+# Categoría interna -> (columna Tipo de la tabla, encabezado del mensaje)
 TIPOS = {
     'Lexico': ('Léxico', 'Error Léxico'),
     'Sintactico': ('Sintáctico', 'Error Sintáctico'),
@@ -11,7 +11,7 @@ TIPOS = {
 _CATEGORIA = re.compile(r'^\[(\w+)\]\s*(.*)$', re.DOTALL)
 
 def filas_errores(tuplas, codigo):
-    """Tabla de análisis de errores (§3.5.1) a partir de las tuplas (linea, columna, '[Categoría] mensaje')
+    """Tabla de análisis de errores a partir de las tuplas (linea, columna, '[Categoría] mensaje')
     de todos los canales. Ordena por posición, porque PLY intercala errores léxicos y sintácticos, y
     deja al final los que no tienen posición."""
     lineas = codigo.splitlines()

@@ -49,7 +49,7 @@ function crear(contenedor: HTMLElement, documento: string, extensiones: Extensio
   };
 }
 
-// Editor de código fuente con numeración de líneas (enunciado §3.1.2)
+// Editor de código fuente con numeración de líneas
 export function crearEditorFuente(contenedor: HTMLElement, documento: string,
                                   alCambiar: (texto: string) => void, alEjecutar: () => void): Editor {
   return crear(contenedor, documento, [

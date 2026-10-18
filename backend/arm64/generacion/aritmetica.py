@@ -87,7 +87,7 @@ def _verificar_divisor_entero(self, operador, nodo):
     self.e.etiqueta(valido)
 
 def _a_flotantes(self, tipo_izquierda, tipo_derecha):
-    # Promoción de tipos del enunciado §3.3.5: un i32 mezclado con un f64 se convierte
+    # Promoción de tipos: un i32 mezclado con un f64 se convierte
     e = self.e
     if tipo_izquierda == 'i32':
         e.instr('scvtf', 'd0', 'x9')
@@ -136,7 +136,7 @@ def _aritmetica_textos(self, operador, tipo_izquierda, nodo):
         e.instr('mov', 'x3', 'x12')
         e.instr('bl', 'ox_concatenar')
     elif operador == '*':
-        # String * i32 o i32 * String: el texto repetido n veces (enunciado §3.3.5)
+        # String * i32 o i32 * String: el texto repetido n veces
         if tipo_izquierda == 'String':
             e.instr('mov', 'x0', 'x9')
             e.instr('mov', 'x1', 'x10')
@@ -150,7 +150,7 @@ def _aritmetica_textos(self, operador, tipo_izquierda, nodo):
         raise ErrorGeneracion(f"No se puede aplicar '{operador}' a String", *posicion(nodo))
 
 def _logica(self, nodo):
-    # Corto circuito obligatorio (enunciado §3.3.7): el derecho no se evalúa si el izquierdo decide
+    # Corto circuito obligatorio: el derecho no se evalúa si el izquierdo decide
     fin = f'fin_logico_{self.nuevo_numero()}'
     self.visitar(nodo.izquierda)
     self.e.instr('cbz' if nodo.operador == '&&' else 'cbnz', 'x0', fin)

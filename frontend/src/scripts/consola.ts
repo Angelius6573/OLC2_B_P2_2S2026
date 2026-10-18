@@ -24,7 +24,7 @@ export function limpiarConsola() {
   elemento('consola').innerHTML = '<p class="ide-vacio">Presiona «Ejecutar» para ver la salida.</p>';
 }
 
-// Estado, tiempos, salida del programa y, debajo, cada error con el formato del enunciado §3.5.1
+// Estado, tiempos, salida del programa y, debajo, cada error con el formato del enunciado
 export function mostrarConsola(respuesta: RespuestaCompilacion) {
   const { status, output, errors } = respuesta;
   let html = `<p class="consola-estado ${status.ok ? 'ok' : 'error'}">${escapar(status.message)}</p>`;

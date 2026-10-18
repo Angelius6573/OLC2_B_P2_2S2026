@@ -6,7 +6,7 @@ export function urlReporteSimbolos(nombre: string) {
   return `/api/reportes/${encodeURIComponent(nombre)}`;
 }
 
-// Tabla de símbolos (enunciado §3.5.2): No., Identificador, Categoría, Tipo, Ámbito, Línea, Valor
+// Tabla de símbolos: No., Identificador, Categoría, Tipo, Ámbito, Línea, Valor
 export function mostrarSimbolos(simbolos: Simbolo[], reporte: string | null) {
   const seccion = elemento('reporte-simbolos');
   if (!simbolos.length) {

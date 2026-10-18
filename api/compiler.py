@@ -17,7 +17,7 @@ from api.modo_interprete import ejecutar_interprete
 def compilar_codigo(codigo: str, modo: str = 'arm64') -> dict:
     """Análisis, reportes y ejecución en el modo pedido.
 
-    En modo intérprete el flujo es el de la Fase 1: se ejecuta aunque haya errores semánticos.
+    En modo intérprete el flujo es el del Proyecto 1: se ejecuta aunque haya errores semánticos.
     En modo ARM64 solo se genera código para un programa sin errores. Con errores semánticos, pero
     sin léxicos ni sintácticos, se ejecuta con el intérprete; con estos últimos no se ejecuta.
     """

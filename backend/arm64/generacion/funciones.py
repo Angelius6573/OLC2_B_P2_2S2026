@@ -30,8 +30,8 @@ def distribuir_argumentos(tipos):
 def visitar_Programa(self, nodo):
     funciones = [d for d in nodo.declaraciones if isinstance(d, DeclaracionFuncion)]
     if not any(f.nombre_funcion.nombre_funcion == 'main' for f in funciones):
-        raise ErrorGeneracion('El programa no define la función main (enunciado §3.3.14)')
-    # DeclaracionStruct no emite código: su uso (F7, opcional) falla en _visitar_generico
+        raise ErrorGeneracion('El programa no define la función main.')
+    # DeclaracionStruct no emite código: instanciar o leer un struct falla en _visitar_generico
     for funcion in funciones:
         self.visitar(funcion)
 

@@ -33,7 +33,7 @@ def ejecutar_arm64(programa, tabla):
     return resultado.salida, resultado.errores, celdas, bloque, 'arm64'
 
 def ejecutar_con_errores_semanticos(programa, tabla):
-    """Resiliencia (enunciado §3.5.1; ejemplos de §3.3.3 y §3.3.5): un programa con errores semánticos
+    """Resiliencia ante errores semánticos, como en los ejemplos del enunciado: un programa con errores semánticos
     no se traduce a ARM64, pero se ejecuta con el intérprete, que sigue después de esos errores.
     Devuelve lo mismo que ejecutar_arm64."""
     salida, errores, celdas, tiempo = ejecutar_interprete(programa, tabla)

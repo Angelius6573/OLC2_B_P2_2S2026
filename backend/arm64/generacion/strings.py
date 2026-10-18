@@ -1,4 +1,4 @@
-"""Strings y funciones embebidas (PLAN §4.2).
+"""Strings y funciones embebidas.
 
 Un String es {puntero, longitud en bytes}. Un literal apunta a .rodata y toda operación que
 produce texto reserva un bloque nuevo: ningún texto se modifica en sitio, así que compartir el

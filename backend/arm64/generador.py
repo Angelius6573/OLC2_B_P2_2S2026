@@ -65,7 +65,7 @@ class GeneradorARM64(RecorrerAST):
         return super().visitar(nodo)
 
     def _visitar_generico(self, nodo):
-        # Nunca se emite código vacío por un nodo no implementado (PLAN §3.5)
+        # Nunca se emite código vacío por un nodo no implementado
         nombre = type(nodo).__name__
         motivo = NO_SOPORTADOS.get(nombre, 'no tiene generación de código')
         raise ErrorGeneracion(f'{nombre} no se puede compilar a ARM64: {motivo}', *posicion(nodo))
@@ -92,7 +92,7 @@ class GeneradorARM64(RecorrerAST):
         self._fin_sentencia = anterior
 
     def error_runtime(self, codigo, nodo):
-        # mov x6 + bl ox_error + salto al final de la sentencia (PLAN §2.10)
+        # mov x6 + bl ox_error + salto al final de la sentencia
         if self._fin_sentencia is None:
             self._fin_sentencia = f'fin_sentencia_{self.nuevo_numero()}'
         linea, columna = posicion(nodo)

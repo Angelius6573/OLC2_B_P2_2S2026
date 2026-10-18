@@ -10,7 +10,7 @@ const COLORES: Record<ErrorCompilacion['categoria'], string> = {
   Generacion: '#22d3ee',
 };
 
-// Tabla de análisis de errores (enunciado §3.5.1): No, Tipo, Descripción con su fragmento, Línea, Columna.
+// Tabla de análisis de errores: No, Tipo, Descripción con su fragmento, Línea, Columna.
 // Un clic en una fila con posición lleva el cursor del editor a esa línea y columna.
 export function mostrarErrores(errores: ErrorCompilacion[], irA: (linea: number, columna: number) => void) {
   const seccion = elemento('reporte-errores');

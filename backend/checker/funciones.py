@@ -70,7 +70,7 @@ def visitar_FuncionEmbebida(self, nodo):
         tipo_objetivo = self.visitar(nodo.objetivo)
         if tipo_objetivo is not None and tipo_objetivo != 'String':
             se_esperaba(self, nodo, 'String', tipo_objetivo)
-        # Un String solo crece si su variable se declaró con mut (enunciado §3.3.11)
+        # Un String solo crece si su variable se declaró con mut
         receptora = _variable_receptora(nodo.objetivo)
         simbolo = self.tabla.buscar_variable(receptora.id) if receptora is not None else None
         if simbolo is not None and not simbolo.mutable:
