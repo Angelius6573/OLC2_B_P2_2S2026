@@ -56,6 +56,10 @@ def _con_texto(rutina):
     return generar
 
 def _contains(self, nodo):
+    tipo = self.tipo(nodo.objetivo)
+    if es_arreglo(tipo):
+        _contains_arreglo(self, nodo, tipo)
+        return
     self.visitar(nodo.objetivo)
     receptor = self.temporal()
     self.guardar_slot(receptor, True, comentario='receptor')
@@ -64,6 +68,19 @@ def _contains(self, nodo):
     self.e.instr('mov', 'x3', 'x1')
     self.cargar_slot(receptor, True)
     self.e.instr('bl', 'ox_contains')
+
+def _contains_arreglo(self, nodo, tipo):
+    elem = elemento(tipo)
+    if elem not in ('i32', 'bool', 'char'):
+        raise ErrorGeneracion(f"contains() sobre un arreglo de '{elem}' no se puede compilar a ARM64",
+                              *posicion(nodo))
+    self.visitar(nodo.objetivo)
+    arreglo = self.temporal()
+    self.guardar_slot(arreglo, True, comentario='arreglo receptor')
+    self.visitar(nodo.argumentos[0])
+    self.e.instr('mov', 'x2', 'x0', comentario='valor buscado')
+    self.cargar_slot(arreglo, True)
+    self.e.instr('bl', 'ox_contains_array')
 
 def _split(self, nodo):
     self.visitar(nodo.objetivo)

@@ -1,6 +1,6 @@
 [project]
 name = "OxigenNative"
-version = "2.5.8"
+version = "2.5.9"
 description = "Compilador de OxigenScript a ARM64"
 readme = "README.md"
 requires-python = ">=3.14"
