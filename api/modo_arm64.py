@@ -32,10 +32,10 @@ def ejecutar_arm64(programa, tabla):
     _, _, celdas, _ = ejecutar_interprete(programa, tabla, LIMITE_PASOS_VALORES)
     return resultado.salida, resultado.errores, celdas, bloque, 'arm64'
 
-def ejecutar_con_errores_semanticos(programa, tabla):
-    """Resiliencia ante errores semánticos, como en los ejemplos del enunciado: un programa con errores semánticos
-    no se traduce a ARM64, pero se ejecuta con el intérprete, que sigue después de esos errores.
-    Devuelve lo mismo que ejecutar_arm64."""
+def ejecutar_con_errores(programa, tabla):
+    """Resiliencia ante errores de análisis, como en los ejemplos del enunciado: un programa con errores léxicos,
+    sintácticos o semánticos no se traduce a ARM64, pero se ejecuta con el intérprete, que sigue después de esos
+    errores. Devuelve lo mismo que ejecutar_arm64."""
     salida, errores, celdas, tiempo = ejecutar_interprete(programa, tabla)
     bloque = {
         'asm': '',
@@ -44,6 +44,6 @@ def ejecutar_con_errores_semanticos(programa, tabla):
         'exit_code': None,
         'stderr': '',
         'times': {'interprete': tiempo},
-        'notice': 'El programa tiene errores semánticos: no se generó código ARM64. Se ejecutó con el intérprete.',
+        'notice': 'El programa tiene errores: no se generó código ARM64. Se ejecutó con el intérprete.',
     }
     return salida, errores, celdas, bloque, 'interprete'
