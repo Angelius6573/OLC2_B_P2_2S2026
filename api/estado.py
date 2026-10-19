@@ -18,7 +18,7 @@ def estado_ejecucion(modo_pedido, modo_real, arm64, tiempo, filas_errores):
     if modo_real == 'arm64':
         mensaje = 'Compilación exitosa (ARM64). Ejecutado con QEMU'
     elif modo_pedido == 'arm64' and de_analisis:
-        mensaje = 'Hay errores semánticos: no se generó ARM64. Ejecutado con el intérprete'
+        mensaje = 'Hay errores de análisis: no se generó ARM64. Ejecutado con el intérprete'
     elif modo_pedido == 'arm64':
         mensaje = 'Sin soporte ARM64 para este programa. Ejecutado con el intérprete'
     else:
