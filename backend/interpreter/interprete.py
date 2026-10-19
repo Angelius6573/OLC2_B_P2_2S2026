@@ -12,8 +12,9 @@ from backend.interpreter.expressions import (
     visitar_Variable,
 )
 from backend.interpreter.variables import (
-    visitar_DeclaracionVariable, visitar_Asignacion, visitar_AsignacionCompuesta,
+    visitar_DeclaracionVariable, visitar_Asignacion, visitar_AsignacionCompuesta, _default_por_tipo,
 )
+from backend.ast_modular.variables import DeclaracionVariable
 from backend.interpreter.declaraciones import (
     visitar_Programa, visitar_DeclaracionStruct, visitar_DeclaracionFuncion,
 )
@@ -128,9 +129,23 @@ class Interprete(RecorrerAST):
         self.ambito_actual = Ambito(anterior)
         try:
             for instruccion in bloque:
-                self.visitar(instruccion)
+                self._ejecutar_sentencia(instruccion)
         finally:
             self.ambito_actual = anterior
+
+    def _ejecutar_sentencia(self, instruccion):
+        # Como en ARM64: un error de ejecución se reporta y solo se omite la sentencia que falla
+        try:
+            self.visitar(instruccion)
+        except RecursionError:
+            raise
+        except RuntimeError as e:
+            from backend.errores import reportar
+            reportar('Ejecucion', 0, 0, str(e))
+            if isinstance(instruccion, DeclaracionVariable):
+                # Igual que en ARM64, la variable existe con el valor por defecto de su tipo
+                self.ambito_actual.declarar(instruccion.nombre, _default_por_tipo(instruccion.tipo),
+                                            instruccion.mutabilidad == 'let mut')
 
     def _visitar_generico(self, nodo):
         return None

@@ -31,9 +31,15 @@ def visitar_Booleano(self, nodo):
     return nodo.valor
 
 def visitar_OperacionBinaria(self, nodo):
+    op = nodo.operador
+    if op in ('&&', '||'):
+        # Corto circuito: el derecho no se evalúa si el izquierdo ya decide
+        izq = self.visitar(nodo.izquierda)
+        if (op == '&&' and not izq) or (op == '||' and izq):
+            return izq
+        return self.visitar(nodo.derecha)
     izq = self.visitar(nodo.izquierda)
     der = self.visitar(nodo.derecha)
-    op = nodo.operador
     if op in ARITMETICOS:
         if getattr(nodo, 'tipo', None) is None or _incompatibles(op, izq, der):
             return None
@@ -67,10 +73,6 @@ def visitar_OperacionBinaria(self, nodo):
             return izq > der
         if op == '>=':
             return izq >= der
-        if op == '&&':
-            return izq and der
-        if op == '||':
-            return izq or der
     except TypeError:
         return None
     return None

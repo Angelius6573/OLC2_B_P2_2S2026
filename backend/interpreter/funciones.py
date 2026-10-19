@@ -14,6 +14,9 @@ def _llamar_funcion(self, nombre, argumentos):
     func = self.funciones.get(nombre)
     if func is None:
         raise RuntimeError(f"Función '{nombre}' no declarada")
+    if len(argumentos) != len(func.parametros):
+        # El checker ya lo reportó; la llamada se omite como cualquier sentencia que falla
+        raise RuntimeError(f"La función '{nombre}' esperaba {len(func.parametros)} argumentos")
     nuevo = Ambito(self.ambito_actual)
     for i, (nombre_param, _) in enumerate(func.parametros):
         valor = argumentos[i] if i < len(argumentos) else None
@@ -22,7 +25,7 @@ def _llamar_funcion(self, nombre, argumentos):
     self.ambito_actual = nuevo
     try:
         for instruccion in func.bloque:
-            self.visitar(instruccion)
+            self._ejecutar_sentencia(instruccion)
         return None
     except _ReturnValue as rv:
         return rv.valor
@@ -47,7 +50,9 @@ def visitar_FuncionEmbebida(self, nodo):
 
 def _ejecutar_embebida(self, nombre, objetivo, argumentos, nodo):
     if nombre == 'typeof':
-        return _typeofvalor(argumentos[0] if argumentos else None)
+        # El tipo estático del checker distingue char de String, que en Python son ambos str
+        tipo = getattr(nodo.argumentos[0], 'tipo', None) if nodo.argumentos else None
+        return tipo if tipo is not None else _typeofvalor(argumentos[0] if argumentos else None)
     if nombre == 'random':
         import random
         if len(argumentos) == 2:
@@ -79,6 +84,8 @@ def _ejecutar_embebida(self, nombre, objetivo, argumentos, nodo):
             return objetivo.replace(str(argumentos[0]), str(argumentos[1]))
         return objetivo
     if nombre == 'contains':
+        if isinstance(objetivo, list):
+            return argumentos[0] in objetivo
         return str(argumentos[0]) in objetivo if isinstance(objetivo, str) and argumentos else False
     if nombre == 'split':
         return objetivo.split(str(argumentos[0])) if isinstance(objetivo, str) and argumentos else [objetivo] if objetivo is not None else []
