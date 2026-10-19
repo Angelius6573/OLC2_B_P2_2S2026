@@ -1,6 +1,6 @@
 from backend.ast_modular.arrays import AccederIndice, AsignarIndice, Slice, Repetidor
 from backend.ast_modular.aritmetica import NumeroEntero
-from backend.checker.helpers import se_esperaba, verificar_asignacion, tipo_elemento, tamano_arreglo, nombre_objetivo
+from backend.checker.helpers import se_esperaba, verificar_asignacion, tipo_elemento, tamano_arreglo
 
 def visitar_AccederIndice(self, nodo):
     tipo_objetivo = self.visitar(nodo.objetivo)
@@ -17,8 +17,7 @@ def visitar_AccederIndice(self, nodo):
         if isinstance(indice, NumeroEntero):
             tamano = tamano_arreglo(tipo_actual)
             if tamano is not None and not (0 <= indice.valor < tamano):
-                self.error(nodo.linea, nodo.columna,
-                           f"Índice fuera de los límites del arreglo '{nombre_objetivo(nodo.objetivo)}'.")
+                self.error(nodo.linea, nodo.columna, "Índice fuera de los límites del arreglo.")
         tipo_actual = tipo_elemento(tipo_actual)
     nodo.tipo = tipo_actual
     return tipo_actual
