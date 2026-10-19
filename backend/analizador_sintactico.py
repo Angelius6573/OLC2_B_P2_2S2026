@@ -1,3 +1,4 @@
+import ply.lex as lex
 import ply.yacc as yacc
 from backend.analizador_lexico import lexema_tipo, lexer, linea_columna, tokens
 from backend.errores import reportar
@@ -139,3 +140,32 @@ def p_error(t):
                  f"Token inesperado '{datos[t.lexpos:t.fin]}'.{_sugerencia(esperados)}")
 
 parser = yacc.yacc(start='init')
+
+def analizar(codigo):
+    """Parsea el programa. Si el archivo termina con llaves abiertas (por ejemplo, porque un comentario
+    sin cierre se comió la última), reporta la que falta y la cierra con un '}' implícito: sin eso, PLY
+    abandona en el fin de archivo y el programa no llega al análisis semántico ni a la ejecución."""
+    abiertas = 0
+    ultimo = None
+    reportado = False
+
+    def siguiente():
+        nonlocal abiertas, ultimo, reportado
+        token = lexer.token()
+        if token is not None:
+            abiertas += {'OPEN_BRACE': 1, 'CLOSE_BRACE': -1}.get(token.type, 0)
+            ultimo = token
+            return token
+        if abiertas <= 0 or ultimo is None:
+            return None
+        if not reportado:
+            reportar('Sintactico', *linea_columna(lexer.lexdata, ultimo.fin), "Se esperaba '}'.")
+            reportado = True
+        abiertas -= 1
+        cierre = lex.LexToken()
+        cierre.type, cierre.value = 'CLOSE_BRACE', '}'
+        cierre.lineno, cierre.lexpos = ultimo.lineno, len(lexer.lexdata)
+        cierre.fin = cierre.lexpos
+        return cierre
+
+    return parser.parse(codigo, lexer=lexer, tokenfunc=siguiente)

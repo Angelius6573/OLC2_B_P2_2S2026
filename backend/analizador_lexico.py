@@ -218,7 +218,7 @@ def t_ignore_COMENTARIO_MULTI_LINEA(t):
 # Va después del comentario cerrado: PLY prueba las reglas de función en orden de definición
 def t_ignore_COMENTARIO_SIN_CIERRE(t):
     r'/\*[\s\S]*'
-    reportar('Lexico', t.lineno, contar_columna(t.lexer.lexdata, t), "Comentario de bloque sin cierre: falta '*/'.")
+    reportar('Lexico', t.lineno, contar_columna(t.lexer.lexdata, t), "Comentario de bloque sin cerrar.")
     t.lexer.lineno += t.value.count('\n')
 
 def contar_columna(input, token):
