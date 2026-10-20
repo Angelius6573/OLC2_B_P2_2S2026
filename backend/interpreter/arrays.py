@@ -42,6 +42,9 @@ def visitar_Slice(self, nodo):
     inicio = self.visitar(nodo.inicio) if nodo.inicio else 0
     fin = self.visitar(nodo.fin) if nodo.fin else len(objetivo)
     if isinstance(objetivo, (list, str)):
+        # Como en ARM64: Python recortaría el rango sin avisar
+        if not 0 <= inicio <= fin <= len(objetivo):
+            raise RuntimeError(f"{nodo.linea}:{nodo.columna} Índice fuera de rango")
         return objetivo[inicio:fin]
     raise RuntimeError(f"{nodo.linea}:{nodo.columna} No se puede hacer slice")
 
