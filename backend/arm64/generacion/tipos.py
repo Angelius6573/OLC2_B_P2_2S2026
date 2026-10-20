@@ -20,17 +20,25 @@ MANEJADORES_DEPURACION = {
     'String': 'ox_print_string_debug',
 }
 
+def es_slice(tipo):
+    # '&[T]': una vista sobre un arreglo, con el mismo valor {puntero, longitud}
+    return isinstance(tipo, str) and tipo.startswith('&[')
+
 def es_arreglo(tipo):
-    return isinstance(tipo, str) and tipo.startswith('[')
+    return isinstance(tipo, str) and tipo.startswith('[') or es_slice(tipo)
 
 def es_par(tipo):
     # String y arreglo ocupan las dos palabras del slot: puntero en +0 y longitud en +8
     return tipo == 'String' or es_arreglo(tipo)
 
 def elemento(tipo):
+    if es_slice(tipo):
+        return tipo[2:-1].strip()
     return tipo[1:tipo.rindex(';')].strip()
 
 def longitud(tipo):
+    if es_slice(tipo):
+        return None
     texto = tipo[tipo.rindex(';') + 1:-1].strip()
     return int(texto) if texto.isdigit() else None
 

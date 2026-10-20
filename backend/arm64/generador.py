@@ -24,7 +24,7 @@ from backend.arm64.generacion.funciones import (
 from backend.arm64.generacion.impresion import visitar_Imprimir
 from backend.arm64.generacion.match import visitar_Match
 from backend.arm64.generacion.arreglos import (
-    arreglo_literal, visitar_AccederIndice, visitar_AsignarIndice, visitar_Repetidor,
+    arreglo_literal, visitar_AccederIndice, visitar_AsignarIndice, visitar_Repetidor, visitar_Slice,
     direccion_elemento, guardar_en_direccion,
 )
 from backend.arm64.generacion.strings import visitar_DeclaracionString, visitar_FuncionEmbebida
@@ -33,7 +33,6 @@ _STRUCTS = 'los structs no tienen soporte en ARM64 y se ejecutan en modo intérp
 NO_SOPORTADOS = {
     'InstanciarStruct': _STRUCTS,
     'AccederCampo': _STRUCTS,
-    'Slice': 'los slices no tienen soporte en ARM64 y se ejecutan en modo intérprete',
 }
 
 class GeneradorARM64(RecorrerAST):
@@ -204,6 +203,7 @@ class GeneradorARM64(RecorrerAST):
     visitar_AccederIndice = visitar_AccederIndice
     visitar_AsignarIndice = visitar_AsignarIndice
     visitar_Repetidor = visitar_Repetidor
+    visitar_Slice = visitar_Slice
     direccion_elemento = direccion_elemento
     guardar_en_direccion = guardar_en_direccion
     # Bloque 9: strings y embebidas

@@ -154,6 +154,34 @@ def visitar_Repetidor(self, nodo):
     self.cargar_slot(base, False)
     self.cargar_slot(cantidad, False, 'x1')
 
+def visitar_Slice(self, nodo):
+    """&a[i..j]: una vista {puntero + i * celdas(T) * 16, j - i} sobre el mismo bloque, sin copiar."""
+    e = self.e
+    paso = celdas(elemento(self.tipo(nodo.objetivo)), nodo) * TAMANIO_CELDA
+    self.visitar(nodo.objetivo)
+    arreglo = self.temporal()
+    self.guardar_slot(arreglo, True, comentario='arreglo del slice')
+    self.visitar(nodo.inicio)
+    inicio = self.temporal()
+    self.guardar_slot(inicio, False, comentario='inicio del slice')
+    self.visitar(nodo.fin)
+    e.instr('mov', 'x11', 'x0', comentario='fin del slice')
+    self.cargar_slot(inicio, False, 'x12')
+    self.cargar_slot(arreglo, True, 'x9', 'x10')
+    # Sin signo, inicio <= fin <= longitud: un extremo negativo también queda fuera de rango
+    n = self.nuevo_numero()
+    fuera, valido = f'slice_fuera_{n}', f'slice_valido_{n}'
+    e.instr('cmp', 'x11', 'x10')
+    e.instr('b.hi', fuera)
+    e.instr('cmp', 'x12', 'x11')
+    e.instr('b.ls', valido)
+    e.etiqueta(fuera)
+    self.error_runtime('ERR_INDICE_FUERA', nodo)
+    e.etiqueta(valido)
+    e.cargar_inmediato('x13', paso)
+    e.instr('madd', 'x0', 'x12', 'x13', 'x9', comentario='primera celda del slice')
+    e.instr('sub', 'x1', 'x11', 'x12', comentario='longitud del slice')
+
 def _posicion_lista(lista):
     for item in lista:
         if not isinstance(item, list):
