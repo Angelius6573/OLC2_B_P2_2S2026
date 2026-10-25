@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.14"
 
 [[package]]
@@ -97,8 +97,8 @@ wheels = [
 ]
 
 [[package]]
-name = "oxigenscript"
-version = "1.2.0"
+name = "oxigennative"
+version = "2.6.1"
 source = { virtual = "." }
 dependencies = [
     { name = "fastapi" },
